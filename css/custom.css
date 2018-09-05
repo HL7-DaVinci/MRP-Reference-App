@@ -14,15 +14,15 @@ td {
     vertical-align: middle;
 }
 
-#intro-screen {
+#chk-post-discharge {
+    margin-left: 10px;
+}
+
+#intro-screen, #confirm-screen {
     align-self: center;
     width: 700px;
 }
 
 #intro-screen, #medrec-screen, #review-screen, #confirm-screen, #meds {
     display: none;
-}
-
-#chk-post-discharge {
-    margin-left: 10px;
 }
