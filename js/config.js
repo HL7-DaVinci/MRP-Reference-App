@@ -23,7 +23,7 @@ if (!MRP) {
     }
   }
 
-  MRP.listResource = {
+  MRP.newListResource = {
       "resourceType": "List",
       "id": "LISTIDHERE",
       "status": "current",

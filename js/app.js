@@ -6,8 +6,8 @@ if (!MRP) {
 (function () {
 
     MRP.client = null;
-    MRP.mypatient = null;
-    MRP.reconciled = [];
+    MRP.patient = null;
+    MRP.reconciledMeds = [];
 
     MRP.getRandomInt = (min, max) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -54,12 +54,13 @@ if (!MRP) {
 
     MRP.displayReviewScreen = () => {
         $("#finallist").empty();
-        MRP.listResource.entry = [];
-        MRP.reconciled.sort((a,b) => a.name >= b.name)
+        MRP.newListResource.entry = [];
+        MRP.reconciledMeds
+                    .sort((a,b) => a.name >= b.name)
                     .filter((a) => a.status === "active")
                     .forEach((med) => {
                         if ($('#' + med.id).val() === "active") {
-                            MRP.listResource.entry.push ({
+                            MRP.newListResource.entry.push ({
                                 "item": {
                                     "reference": med.ref
                                 }
@@ -101,7 +102,7 @@ if (!MRP) {
         // TODO: implement error handling for missing scenarios
 
         MRP.client.patient.read().then((pt) => {
-            MRP.mypatient = pt;
+            MRP.patient = pt;
             MRP.displayPatient (pt);
         });
 
@@ -140,7 +141,7 @@ if (!MRP) {
                         let route = 'oral';  // TODO: Get route from Med resource
                         let status = med.status; // TODO: Make use of status
                         let medid = med.id;
-                        MRP.reconciled.push ({name: medName, id:medid, dosage: dosage, route: route, status:"active"});
+                        MRP.reconciledMeds.push ({name: medName, id:medid, dosage: dosage, route: route, status:"active"});
                         // TODO: medid for the purposes of the list should be listid+medid to avoid collisions
                         $('#' + r.lid).append("<tr><td class='medtd'>" + medName + "</td><td>" + dosage + "</td><td>" + 
                                             route + "</td><td><select class='custom-select' id='" + 
@@ -165,12 +166,12 @@ if (!MRP) {
         // TODO: Generate new MedicationRequests etc
         // TODO: Disable/deprecate source lists and MedicationRequest-s
         // TODO: Review list ID generation scheme
-        MRP.listResource.id = "list-" + MRP.getRandomInt (1000,9999);
-        MRP.listResource.date = timestamp;
-        MRP.listResource.subject.reference = "Patient/" + MRP.client.patient.id;
-        let listCreatePromise = MRP.client.patient.api.update({resource: MRP.listResource});
+        MRP.newListResource.id = "list-" + MRP.getRandomInt (1000,9999);
+        MRP.newListResource.date = timestamp;
+        MRP.newListResource.subject.reference = "Patient/" + MRP.client.patient.id;
+        let listCreatePromise = MRP.client.patient.api.update({resource: MRP.newListResource});
 
-        let orgID = MRP.mypatient.managingOrganization.reference.split('/')[1];
+        let orgID = MRP.patient.managingOrganization.reference.split('/')[1];
         let locID = MRP.scenarios[MRP.client.patient.id].location;
         // TODO: handle missing scenarios
 
@@ -194,18 +195,18 @@ if (!MRP) {
             let encounter = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Encounter");
             let coverage = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Coverage");
 
-            patient.resource = MRP.mypatient;
-            practitioner.resource = res[0];
-            organization.resource = res[1].data;
-            location.resource = res[2].data;
-            coverage.resource = res[3].data.entry[0].resource;
-        
             MRP.operationPayload.id = MRP.getGUID();
             measurereport.resource.id = MRP.getGUID();
             task.resource.id = MRP.getGUID();
             encounter.resource.id = MRP.getGUID();
 
-            // TODO: Consider a more sophisticated resource generation model
+            patient.resource = MRP.patient;
+            practitioner.resource = res[0];
+            organization.resource = res[1].data;
+            location.resource = res[2].data;
+            coverage.resource = res[3].data.entry[0].resource;
+
+            // TODO: look into a nicer resource generation lib
             measurereport.resource.patient.reference = "Patient/" + patient.resource.id;
             measurereport.resource.date = timestamp;
             measurereport.resource.reportingOrganization = "Organization/" + organization.resource.id;
@@ -220,14 +221,11 @@ if (!MRP) {
             encounter.resource.location.reference = "Location/" + location.resource.id;
             encounter.resource.participant[0].individual.reference = "Practitioner/" + practitioner.resource.id;
             encounter.resource.serviceProvider.reference = "Organization/" + organization.resource.id;
-
             patient.resource.managingOrganization = "Organization/" + organization.resource.id;
             coverage.resource.policyHolder.reference = "Patient/" + patient.resource.id;
             coverage.resource.subscriber.reference = "Patient/" + patient.resource.id;
             coverage.resource.beneficiary.reference = "Patient/" + patient.resource.id;
-
-            // TODO: Fix "Resource Organization/organization04 not found, specified in path: Coverage.payor" error. For now:
-            coverage.resource.payor[0].reference = "Organization/" + organization.resource.id;
+            // coverage.resource.payor[0].reference = "Organization/organization04";
             // Question: Should payor even be submitted here explicitly? If yes, then how would it get into the Payer sandbox?
         
             if (! $('#chk-post-discharge').is(':checked')) {
@@ -252,7 +250,7 @@ if (!MRP) {
                     //TODO: add error handling
                 })
             ]).then(() => {
-                $('#confirm-screen p').append(" (" + MRP.listResource.id + ")");
+                $('#confirm-screen p').append(" (" + MRP.newListResource.id + ")");
                 console.log (JSON.stringify(MRP.operationPayload, null, 2));
                 MRP.displayConfirmScreen();
             });
