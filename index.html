@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+     <title>DaVinci Med Rec App</title>
+     <script src="node_modules/fhirclient/fhir-client.js"></script>
+     <script src="lib/jquery-3.3.1.js"></script>
+     <link href="css/bootstrap.css" rel="stylesheet">
+     <link href="css/bootstrap-toggle.css" rel="stylesheet">
+     <script src="lib/bootstrap-toggle.js"></script>
+     <link href="css/custom.css" rel="stylesheet">
+     <script src="js/resources.js"></script>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+ </head>
+ <body>
+    <div id="intro-screen" class="card alert-info">
+        <div class="card-body">
+            <h5 class="card-title">Scenario Description</h5>
+            <p class='card-text' id='scenario-intro'></p>
+            <a href="#" class="btn btn-primary" id="btn-start">Reconcile medications</a>
+        </div>
+    </div>
+    <div id="medrec-screen">
+        <h1>Medications for <span id="name1"></span></h1>
+        <div id="spinner">Loading...</div>
+        <div id="meds">
+            <div id="lists1"></div>
+            <div>
+                <button type="button" class="btn btn-primary" id="btn-review">Review reconciled medications</button>
+            </div>
+        </div>
+    </div>
+    <div id="review-screen">
+        <h1>Reconciled Medications for <span id="name2"></span></h1>
+        <div id="discharge-selection"><p>
+            This medication reconciliation was done post-discharge
+            <input type="checkbox" id="chk-post-discharge" checked="checked">
+        </p></div>
+        <div id="lists2"><p><div class='dvt'>
+            <table class='table alert-warning'><thead><tr><th>Medication</th><th>Dosage</th><th>Route</th></tr></thead><tbody id='finallist'></tbody></table>
+        </div></p></div>
+        <div>
+            <button type="button" class="btn btn-secondary" id="btn-edit">Edit medications</button>
+            <button type="button" class="btn btn-primary" id="btn-submit">Submit reconciled medications</button>
+        </div>
+    </div>
+    <div id="confirm-screen" class="card alert-info">
+            <div class="card-body">
+                <h5 class="card-title">Confirmation</h5>
+                <p class="card-text">Reconciled list written to paitent record!</p>
+            </div>
+        </div>
+    <script src="js/app.js"></script>
+ </body>
+</html>
