@@ -239,17 +239,22 @@ if (!MRP) {
             }
         
             MRP.operationPayload.parameter = [measurereport, task, patient, location, practitioner, organization, encounter, coverage];
-        
-            Promise.all([
-                listCreatePromise,
-                $.ajax({
+
+            let promises = [listCreatePromise];
+
+            if (MRP.payerEndpoint.type === "open") {
+                promises.push($.ajax({
                     type: 'POST',
-                    url: MRP.payerEndpoint,
+                    url: MRP.payerEndpoint.url,
                     data: JSON.stringify(MRP.operationPayload),
                     contentType: "application/fhir+json"
                     //TODO: add error handling
-                })
-            ]).then(() => {
+                }));
+            } else if (MRP.payerEndpoint.type === "secure") {
+                // TODO
+            }
+
+            Promise.all(promises).then(() => {
                 $('#confirm-screen p').append(" (" + MRP.newListResource.id + ")");
                 console.log (JSON.stringify(MRP.operationPayload, null, 2));
                 MRP.displayConfirmScreen();

@@ -5,7 +5,10 @@ if (!MRP) {
 
 (function () {
 
-  MRP.payerEndpoint = "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/open/Measure/measure-mrp/$submit-data";
+  MRP.payerEndpoint = {
+    "url": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/open/Measure/measure-mrp/$submit-data",
+    "type": "open"
+  };
 
   MRP.scenarios = {
     "patient01": {
