@@ -244,7 +244,7 @@ if (!MRP) {
                 listCreatePromise,
                 $.ajax({
                     type: 'POST',
-                    url: "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/open/MeasureReport/measure-mrp/$submit-data",
+                    url: MRP.payerEndpoint,
                     data: JSON.stringify(MRP.operationPayload),
                     contentType: "application/fhir+json"
                     //TODO: add error handling
