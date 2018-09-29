@@ -216,8 +216,8 @@ if (!MRP) {
             task.resource.for.reference = "Patient/" + patient.resource.id;
             task.resource.context.reference = "Encounter/" + encounter.resource.id;
             task.resource.authoredOn = timestamp;
-            task.executionPeriod.start = timestamp;
-            task.executionPeriod.end = timestamp;
+            task.resource.executionPeriod.start = timestamp;
+            task.resource.executionPeriod.end = timestamp;
             task.resource.owner.reference = "Practitioner/" + practitioner.resource.id;
             encounter.resource.period.start = timestamp;
             encounter.resource.period.end = timestamp;
