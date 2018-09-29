@@ -184,84 +184,102 @@ if (!MRP) {
             console.assert (res[3].data.total <= 1, "No more than 1 Coverage resources found");
             console.assert (res[3].data.total === 1, "Matching Coverage resource found");
 
-            let measurereport = MRP.operationPayload.parameter.find(e => e.name === "measure-report");
+            var coverageResource = res[3].data.entry[0].resource;
+            var payorOrgID = coverageResource.payor[0].reference.split('/')[1];
 
-            // TODO: consider generating from a template instead of extracting from sample
-            let task = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Task");
-            let patient = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Patient");
-            let location = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Location");
-            let practitioner = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Practitioner");
-            let organization = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Organization");
-            let encounter = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Encounter");
-            let coverage = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Coverage");
+            MRP.client.patient.api.read({type: "Organization", id: payorOrgID}).then(function(payorOrganization) {
+                let measurereport = MRP.operationPayload.parameter.find(e => e.name === "measure-report");
 
-            MRP.operationPayload.id = MRP.getGUID();
-            measurereport.resource.id = MRP.getGUID();
-            task.resource.id = MRP.getGUID();
-            encounter.resource.id = MRP.getGUID();
-
-            patient.resource = MRP.patient;
-            practitioner.resource = res[0];
-            organization.resource = res[1].data;
-            location.resource = res[2].data;
-            coverage.resource = res[3].data.entry[0].resource;
-
-            // TODO: look into a nicer resource generation lib
-            measurereport.resource.patient.reference = "Patient/" + patient.resource.id;
-            measurereport.resource.date = timestamp;
-            measurereport.resource.period.start = timestamp;
-            measurereport.resource.period.end = timestamp;
-            measurereport.resource.reportingOrganization = "Organization/" + organization.resource.id;
-            measurereport.resource.evaluatedResources.extension[0].valueReference.reference = "Task/" + task.resource.id;
-            task.resource.for.reference = "Patient/" + patient.resource.id;
-            task.resource.context.reference = "Encounter/" + encounter.resource.id;
-            task.resource.authoredOn = timestamp;
-            task.resource.executionPeriod.start = timestamp;
-            task.resource.executionPeriod.end = timestamp;
-            task.resource.owner.reference = "Practitioner/" + practitioner.resource.id;
-            encounter.resource.period.start = timestamp;
-            encounter.resource.period.end = timestamp;
-            encounter.resource.subject.reference = "Patient/" + patient.resource.id;
-            encounter.resource.location.reference = "Location/" + location.resource.id;
-            encounter.resource.participant[0].individual.reference = "Practitioner/" + practitioner.resource.id;
-            encounter.resource.serviceProvider.reference = "Organization/" + organization.resource.id;
-            patient.resource.managingOrganization = "Organization/" + organization.resource.id;
-            coverage.resource.policyHolder.reference = "Patient/" + patient.resource.id;
-            coverage.resource.subscriber.reference = "Patient/" + patient.resource.id;
-            coverage.resource.beneficiary.reference = "Patient/" + patient.resource.id;
-            // coverage.resource.payor[0].reference = "Organization/organization04";
-            // Question: Should payor even be submitted here explicitly? If yes, then how would it get into the Payer sandbox?
-        
-            if (! $('#chk-post-discharge').is(':checked')) {
-                task.resource.code.coding = [
-                    {
-                        "system": "http://snomed.info/sct",
-                        "code": "430193006",
-                        "display": "Generic Medication Reconciliation"
-                    }
-                ];
-            }
-        
-            MRP.operationPayload.parameter = [measurereport, task, patient, location, practitioner, organization, encounter, coverage];
-
-            let promises = [listCreatePromise];
-
-            if (MRP.payerEndpoint.type === "open") {
-                promises.push($.ajax({
-                    type: 'POST',
-                    url: MRP.payerEndpoint.url,
-                    data: JSON.stringify(MRP.operationPayload),
-                    contentType: "application/fhir+json"
-                    //TODO: add error handling
-                }));
-            } else if (MRP.payerEndpoint.type === "secure") {
-                // TODO
-            }
-
-            Promise.all(promises).then(() => {
-                $('#confirm-screen p').append(" (" + MRP.newListResource.id + ")");
-                console.log (JSON.stringify(MRP.operationPayload, null, 2));
-                MRP.displayConfirmScreen();
+                // TODO: consider generating from a template instead of extracting from sample
+                let task = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Task");
+                let patient = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Patient");
+                let location = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Location");
+                let practitioner = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Practitioner");
+                let organization = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Organization");
+                let encounter = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Encounter");
+                let coverage = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Coverage");
+                let payor = {
+                    "name": "resource",
+                    "resource": payorOrganization.data
+                };
+    
+                MRP.operationPayload.id = MRP.getGUID();
+                measurereport.resource.id = MRP.getGUID();
+                task.resource.id = MRP.getGUID();
+                encounter.resource.id = MRP.getGUID();
+    
+                patient.resource = MRP.patient;
+                practitioner.resource = res[0];
+                organization.resource = res[1].data;
+                location.resource = res[2].data;
+                coverage.resource = coverageResource;
+    
+                // TODO: look into a nicer resource generation lib
+                measurereport.resource.patient.reference = "Patient/" + patient.resource.id;
+                measurereport.resource.date = timestamp;
+                measurereport.resource.period.start = timestamp;
+                measurereport.resource.period.end = timestamp;
+                measurereport.resource.reportingOrganization = "Organization/" + organization.resource.id;
+                measurereport.resource.evaluatedResources.extension[0].valueReference.reference = "Task/" + task.resource.id;
+                task.resource.for.reference = "Patient/" + patient.resource.id;
+                task.resource.context.reference = "Encounter/" + encounter.resource.id;
+                task.resource.authoredOn = timestamp;
+                task.resource.executionPeriod.start = timestamp;
+                task.resource.executionPeriod.end = timestamp;
+                task.resource.owner.reference = "Practitioner/" + practitioner.resource.id;
+                encounter.resource.period.start = timestamp;
+                encounter.resource.period.end = timestamp;
+                encounter.resource.subject.reference = "Patient/" + patient.resource.id;
+                encounter.resource.location.reference = "Location/" + location.resource.id;
+                encounter.resource.participant[0].individual.reference = "Practitioner/" + practitioner.resource.id;
+                encounter.resource.serviceProvider.reference = "Organization/" + organization.resource.id;
+                patient.resource.managingOrganization = "Organization/" + organization.resource.id;
+                coverage.resource.policyHolder.reference = "Patient/" + patient.resource.id;
+                coverage.resource.subscriber.reference = "Patient/" + patient.resource.id;
+                coverage.resource.beneficiary.reference = "Patient/" + patient.resource.id;
+                // coverage.resource.payor[0].reference = "Organization/organization04";
+                // Question: Should payor even be submitted here explicitly? If yes, then how would it get into the Payer sandbox?
+            
+                if (! $('#chk-post-discharge').is(':checked')) {
+                    task.resource.code.coding = [
+                        {
+                            "system": "http://snomed.info/sct",
+                            "code": "430193006",
+                            "display": "Generic Medication Reconciliation"
+                        }
+                    ];
+                }
+            
+                MRP.operationPayload.parameter = [measurereport, task, patient, location, practitioner, organization, encounter, coverage, payor];
+    
+                let promises = [listCreatePromise];
+    
+                if (MRP.payerEndpoint.type === "open") {
+                    promises.push($.ajax({
+                        type: 'POST',
+                        url: MRP.payerEndpoint.url,
+                        data: JSON.stringify(MRP.operationPayload),
+                        contentType: "application/fhir+json"
+                        //TODO: add error handling
+                    }));
+                } else if (MRP.payerEndpoint.type === "secure") {
+                    // TODO: Implement full OAuth workflor with refresh token
+                    promises.push($.ajax({
+                        type: 'POST',
+                        url: MRP.payerEndpoint.url,
+                        data: JSON.stringify(MRP.operationPayload),
+                        contentType: "application/fhir+json",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader ("Authorization", "Bearer " + MRP.payerEndpoint.accessToken);
+                        }
+                    }));
+                }
+    
+                Promise.all(promises).then(() => {
+                    $('#confirm-screen p').append(" (" + MRP.newListResource.id + ")");
+                    console.log (JSON.stringify(MRP.operationPayload, null, 2));
+                    MRP.displayConfirmScreen();
+                });
             });
         });
     };
