@@ -91,7 +91,7 @@ if (!MRP) {
               "id": "TASKID",
               "status": "completed",
               "intent": "plan",
-              //"priority": "normal",    /* Note: This is a workaround for a problem with HAPI validator not suporting the current value set */
+              "priority": "routine",
               "code": {
                   "coding":[
                       {
