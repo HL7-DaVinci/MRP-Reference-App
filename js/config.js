@@ -50,7 +50,7 @@ if (!MRP) {
           "resource": {
               "resourceType": "MeasureReport",
               "meta": {
-                "profile": ["http://hl7.org/fhir/ig/davinci/StructureDefinition/measurereport-mrp"]
+                "profile": ["http://hl7.org/fhir/us/davinci-deqm/STU3/StructureDefinition/measurereport-deqm"]
               },
               "id": "MEASUREREPORTID",
               "status": "complete",
@@ -62,6 +62,10 @@ if (!MRP) {
                   "reference": "Patient/PATIENTID"
               },
               "date": "TIMESTAMP",
+              "period": {
+                 "start": "TIMESTAMP",
+                 "end": "TIMESTAMP"
+              },
               "reportingOrganization": {
                   "reference": "Organization/ORGANIZATIONID"
               },
@@ -82,11 +86,12 @@ if (!MRP) {
           "resource": {
               "resourceType": "Task",
               "meta": {
-                "profile": ["http://hl7.org/fhir/ig/davinci/StructureDefinition/task-mrp"]
+                "profile": ["http://hl7.org/fhir/us/hedis/StructureDefinition/hedis-task"]
               },
               "id": "TASKID",
               "status": "completed",
               "intent": "plan",
+              "priority": "normal",
               "code": {
                   "coding":[
                       {
@@ -103,6 +108,10 @@ if (!MRP) {
                 "reference": "Encounter/ENCOUNTERID"
               },
               "authoredOn": "TIMESTAMP",
+              "executionPeriod": {
+                "start": "TIMESTAMP",
+                "end": "TIMESTAMP"
+              },
               "owner": {
                 "reference": "Practitioner/PRACTITIONERID"
               }
@@ -138,7 +147,7 @@ if (!MRP) {
               "resourceType": "Encounter",
               "id": "ENCOUNTERID",
               "meta": {
-                "profile": ["http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"]
+                "profile": ["http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-encounter"]
               },
               "status": "finished",
               "class": {

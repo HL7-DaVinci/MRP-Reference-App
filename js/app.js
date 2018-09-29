@@ -209,11 +209,15 @@ if (!MRP) {
             // TODO: look into a nicer resource generation lib
             measurereport.resource.patient.reference = "Patient/" + patient.resource.id;
             measurereport.resource.date = timestamp;
+            measurereport.resource.period.start = timestamp;
+            measurereport.resource.period.end = timestamp;
             measurereport.resource.reportingOrganization = "Organization/" + organization.resource.id;
             measurereport.resource.evaluatedResources.extension[0].valueReference.reference = "Task/" + task.resource.id;
             task.resource.for.reference = "Patient/" + patient.resource.id;
             task.resource.context.reference = "Encounter/" + encounter.resource.id;
             task.resource.authoredOn = timestamp;
+            task.executionPeriod.start = timestamp;
+            task.executionPeriod.end = timestamp;
             task.resource.owner.reference = "Practitioner/" + practitioner.resource.id;
             encounter.resource.period.start = timestamp;
             encounter.resource.period.end = timestamp;
