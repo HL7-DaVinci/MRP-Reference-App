@@ -62,7 +62,7 @@ if (!MRP) {
                         if ($('#' + med.id).val() === "active") {
                             MRP.newListResource.entry.push ({
                                 "item": {
-                                    "reference": med.ref
+                                    "reference": "MedicationRequest/" + med.id
                                 }
                             });
                             $("#finallist").append("<tr><td class='medtd'>" + med.name + 
