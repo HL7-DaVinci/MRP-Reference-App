@@ -265,7 +265,7 @@ if (!MRP) {
                         } else {
                             FHIR.oauth2.authorize({
                                 "client": {
-                                    "client_id": "4f4b6f93-7796-417d-b4dd-4895d01cda6f",
+                                    "client_id": MRP.payerEndpoint.clientID,
                                     "scope":  "user/*.*" // offline_access"
                                 },
                                 "server": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/data" //MRP.payerEndpoint.url
