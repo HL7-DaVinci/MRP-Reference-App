@@ -5,10 +5,37 @@ if (!MRP) {
 
 (function () {
 
+  /*
   MRP.payerEndpoint = {
     "url": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/open/Measure/measure-mrp/$submit-data",
     "type": "open"
   };
+  */
+  
+
+  
+  MRP.payerEndpoint = {
+    "url": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/data/Measure/measure-mrp/$submit-data",
+    "clientID": "CLIENTIDHERE",
+    "type": "secure"
+  };
+  
+
+  /*
+  MRP.payerEndpoint = {
+    "url": "http://measure.eval.kanvix.com/cqf-ruler/baseDstu3/Measure/measure-mrp/$submit-data",
+    "type": "open"
+  };
+  */
+  
+
+  /*
+  MRP.payerEndpoint = {
+    "url": "https://apitesttemp.bcbsal.org/fhir/stu3/Measure/measure-mrp/$submit-data",
+    "type": "secure",
+    "accessToken": "SECRETHERE"
+  };
+  */
 
   MRP.scenarios = {
     "patient01": {

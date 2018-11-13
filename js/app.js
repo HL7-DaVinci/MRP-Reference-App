@@ -117,16 +117,16 @@ if (!MRP) {
                                         "<th>Medication</th><th>Dosage</th><th>Route</th><th>Status</th>" +
                                         "</tr></thead><tbody id='" + l.id + "'></tbody></table></div></p>");
                     if (l.entry) {
-                            let promises = l.entry.map((e) => {
-                                let medID = e.item.reference.split("/")[1];
-                                return MRP.client.patient.api.read({
-                                    type: "MedicationRequest", 
-                                    id: medID
-                                }).then(r => Promise.resolve({
-                                    res: r,
-                                    lid: l.id
-                                }));
-                            });
+                        let promises = l.entry.map((e) => {
+                            let medID = e.item.reference.split("/")[1];
+                            return MRP.client.patient.api.read({
+                                type: "MedicationRequest", 
+                                id: medID
+                            }).then(r => Promise.resolve({
+                                res: r,
+                                lid: l.id
+                            }));
+                        });
                         medPromises = medPromises.concat(promises);   
                     }
                 });
@@ -252,37 +252,78 @@ if (!MRP) {
             
                 MRP.operationPayload.parameter = [measurereport, task, patient, location, practitioner, organization, encounter, coverage, payor];
     
-                let promises = [listCreatePromise];
+                $('#confirm-screen p').append(" (" + MRP.newListResource.id + ")")
     
-                if (MRP.payerEndpoint.type === "open") {
-                    promises.push($.ajax({
-                        type: 'POST',
-                        url: MRP.payerEndpoint.url,
-                        data: JSON.stringify(MRP.operationPayload),
-                        contentType: "application/fhir+json"
-                        //TODO: add error handling
-                    }));
-                } else if (MRP.payerEndpoint.type === "secure") {
-                    // TODO: Implement full OAuth workflor with refresh token
-                    promises.push($.ajax({
-                        type: 'POST',
-                        url: MRP.payerEndpoint.url,
-                        data: JSON.stringify(MRP.operationPayload),
-                        contentType: "application/fhir+json",
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader ("Authorization", "Bearer " + MRP.payerEndpoint.accessToken);
+                Promise.all([listCreatePromise]).then(() => {
+                    if (MRP.payerEndpoint.type === "secure" && !MRP.payerEndpoint.accessToken) {
+                        sessionStorage.operationPayload = JSON.stringify(MRP.operationPayload);
+                        if (localStorage.tokenResponse) {
+                            let state = JSON.parse(localStorage.tokenResponse).state;
+                            sessionStorage.tokenResponse = localStorage.tokenResponse;
+                            sessionStorage[state] = localStorage[state];
+                            FHIR.oauth2.ready(MRP.initialize);
+                        } else {
+                            FHIR.oauth2.authorize({
+                                "client": {
+                                    "client_id": "4f4b6f93-7796-417d-b4dd-4895d01cda6f",
+                                    "scope":  "user/*.*" // offline_access"
+                                },
+                                "server": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/data" //MRP.payerEndpoint.url
+                            });
                         }
-                    }));
-                }
-    
-                Promise.all(promises).then(() => {
-                    $('#confirm-screen p').append(" (" + MRP.newListResource.id + ")");
-                    console.log (JSON.stringify(MRP.operationPayload, null, 2));
-                    MRP.displayConfirmScreen();
+                    } else {
+                        MRP.finalize();
+                    }
+
                 });
             });
         });
     };
+
+    MRP.initialize = (client) => {
+        if (sessionStorage.operationPayload) {
+            if (JSON.parse(sessionStorage.tokenResponse).refresh_token) {
+                let state = JSON.parse(sessionStorage.tokenResponse).state;
+                localStorage.tokenResponse = sessionStorage.tokenResponse;
+                localStorage[state] = sessionStorage[state];
+            }
+            MRP.operationPayload = JSON.parse(sessionStorage.operationPayload);
+            MRP.payerEndpoint.accessToken = JSON.parse(sessionStorage.tokenResponse).access_token;
+            MRP.finalize();
+        } else {
+            MRP.loadData(client);
+        }
+    };
+
+    MRP.finalize = () => {
+        let promise;
+
+        if (MRP.payerEndpoint.type === "open") {
+            promise = $.ajax({
+                type: 'POST',
+                url: MRP.payerEndpoint.url,
+                data: JSON.stringify(MRP.operationPayload),
+                contentType: "application/fhir+json"
+            }).then(MRP.finalize);
+        } else if (MRP.payerEndpoint.type === "secure") {
+            promise = $.ajax({
+                type: 'POST',
+                url: MRP.payerEndpoint.url,
+                data: JSON.stringify(MRP.operationPayload),
+                contentType: "application/fhir+json",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader ("Authorization", "Bearer " + MRP.payerEndpoint.accessToken);
+                }
+            });
+        }
+        //TODO: add error handling
+
+        promise.then(() => {
+            console.log (JSON.stringify(MRP.operationPayload, null, 2));
+            MRP.displayConfirmScreen();
+        });
+
+    }
 
     $('#chk-post-discharge').bootstrapToggle({
         on: 'Yes',
@@ -294,6 +335,6 @@ if (!MRP) {
     $('#btn-edit').click(MRP.displayMedRecScreen);
     $('#btn-submit').click(MRP.reconcile);
 
-    FHIR.oauth2.ready(MRP.loadData);
+    FHIR.oauth2.ready(MRP.initialize);
 
 }());
