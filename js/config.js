@@ -5,34 +5,38 @@ if (!MRP) {
 
 (function () {
 
+  MRP.clientSettings = {
+    "client_id": "CLIENTIDHERE",
+    "scope"    : "patient/*.* openid profile"
+  };
+
+  MRP.submitEndpoint = "/Measure/measure-mrp/$submit-data";
+
   /*
   MRP.payerEndpoint = {
-    "url": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/open/Measure/measure-mrp/$submit-data",
-    "type": "open"
+    "type": "open",
+    "url": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/open"
   };
   */
   
-
-  
   MRP.payerEndpoint = {
-    "url": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/data/Measure/measure-mrp/$submit-data",
-    "clientID": "CLIENTIDHERE",
-    "type": "secure"
+    "type": "secure-smart",
+    "url": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/data",
+    "clientID": "PAYERCLIENTIDHERE",
+    "scope": "user/*.write" // offline_access
   };
-  
 
   /*
   MRP.payerEndpoint = {
-    "url": "http://measure.eval.kanvix.com/cqf-ruler/baseDstu3/Measure/measure-mrp/$submit-data",
-    "type": "open"
+    "type": "open",
+    "url": "http://measure.eval.kanvix.com/cqf-ruler/baseDstu3"
   };
   */
-  
 
   /*
   MRP.payerEndpoint = {
-    "url": "https://apitesttemp.bcbsal.org/fhir/stu3/Measure/measure-mrp/$submit-data",
-    "type": "secure",
+    "type": "secure-generic",
+    "url": "https://apitesttemp.bcbsal.org/fhir/stu3",
     "accessToken": "SECRETHERE"
   };
   */

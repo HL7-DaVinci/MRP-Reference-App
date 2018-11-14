@@ -255,7 +255,7 @@ if (!MRP) {
                 $('#confirm-screen p').append(" (" + MRP.newListResource.id + ")")
     
                 Promise.all([listCreatePromise]).then(() => {
-                    if (MRP.payerEndpoint.type === "secure" && !MRP.payerEndpoint.accessToken) {
+                    if (MRP.payerEndpoint.type === "secure-smart") {
                         sessionStorage.operationPayload = JSON.stringify(MRP.operationPayload);
                         if (localStorage.tokenResponse) {
                             let state = JSON.parse(localStorage.tokenResponse).state;
@@ -266,9 +266,9 @@ if (!MRP) {
                             FHIR.oauth2.authorize({
                                 "client": {
                                     "client_id": MRP.payerEndpoint.clientID,
-                                    "scope":  "user/*.*" // offline_access"
+                                    "scope":  MRP.payerEndpoint.scope
                                 },
-                                "server": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/data" //MRP.payerEndpoint.url
+                                "server": MRP.payerEndpoint.url
                             });
                         }
                     } else {
@@ -301,14 +301,14 @@ if (!MRP) {
         if (MRP.payerEndpoint.type === "open") {
             promise = $.ajax({
                 type: 'POST',
-                url: MRP.payerEndpoint.url,
+                url: MRP.payerEndpoint.url + MRP.submitEndpoint,
                 data: JSON.stringify(MRP.operationPayload),
                 contentType: "application/fhir+json"
             }).then(MRP.finalize);
-        } else if (MRP.payerEndpoint.type === "secure") {
+        } else {
             promise = $.ajax({
                 type: 'POST',
-                url: MRP.payerEndpoint.url,
+                url: MRP.payerEndpoint.url + MRP.submitEndpoint,
                 data: JSON.stringify(MRP.operationPayload),
                 contentType: "application/fhir+json",
                 beforeSend: function (xhr) {
