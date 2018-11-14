@@ -6,40 +6,35 @@ if (!MRP) {
 (function () {
 
   MRP.clientSettings = {
-    "client_id": "CLIENTIDHERE",
+    "client_id": "41a300f9-6b39-4457-b386-6c33eda1c869",
     "scope"    : "patient/*.* openid profile"
   };
 
   MRP.submitEndpoint = "/Measure/measure-mrp/$submit-data";
-
-  /*
-  MRP.payerEndpoint = {
-    "type": "open",
-    "url": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/open"
-  };
-  */
   
-  MRP.payerEndpoint = {
-    "type": "secure-smart",
-    "url": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/data",
-    "clientID": "PAYERCLIENTIDHERE",
-    "scope": "user/*.write" // offline_access
-  };
+  MRP.payerEndpoints = [{
+      "name": "HSPC Payer Demo - Secure",
+      "type": "secure-smart",
+      "url": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/data",
+      "clientID": "4a71a430-0316-4e2a-8477-7671d7d3b862",
+      "scope": "user/*.write" // offline_access
+    },{
+      "name": "HSPC Payer Demo - Open",
+      "type": "open",
+      "url": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/open"
+    },{
+      "name": "DBCG - Open",
+      "type": "open",
+      "url": "http://measure.eval.kanvix.com/cqf-ruler/baseDstu3"
+    },{
+      "name": "BCBS Alabama - Secure",
+      "type": "secure-generic",
+      "url": "https://apitesttemp.bcbsal.org/fhir/stu3",
+      "accessToken": "SECRETHERE"
+    }
+  ];
 
-  /*
-  MRP.payerEndpoint = {
-    "type": "open",
-    "url": "http://measure.eval.kanvix.com/cqf-ruler/baseDstu3"
-  };
-  */
-
-  /*
-  MRP.payerEndpoint = {
-    "type": "secure-generic",
-    "url": "https://apitesttemp.bcbsal.org/fhir/stu3",
-    "accessToken": "SECRETHERE"
-  };
-  */
+  MRP.payerEndpoint = MRP.payerEndpoints[0];
 
   MRP.scenarios = {
     "patient01": {
