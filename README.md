@@ -1,7 +1,7 @@
 # MRP Reference Application
 
 This application demonstrates the Da Vinci MRP medication reconcilation use case.
-Please see the code for details.
+Please see http://build.fhir.org/ig/HL7/davinci-deqm/mrp.html for details.
 
 ## Install & Run
 Install NodeJS, Go to the app directory and run:
@@ -20,4 +20,6 @@ You should see something like
 You can stop the server if needed using <kbd>Ctrl+C</kbd>.
 
 At this point your Launch URI is http://127.0.0.1:9090/launch.html and your
-Redirect URI is http://127.0.0.1:9090.
+Redirect URI is http://127.0.0.1:9090. Please follow the instructions from
+http://docs.smarthealthit.org to get this SMART application registered and
+configured against your SMART on FHIR server.
