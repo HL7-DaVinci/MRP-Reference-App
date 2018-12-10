@@ -13,28 +13,30 @@ if (!MRP) {
   MRP.submitEndpoint = "/Measure/measure-mrp/$submit-data";
   
   MRP.payerEndpoints = [{
-      "name": "HSPC Payer Demo - Secure",
+      "name": "HSPC Payer Demo (Secure)",
       "type": "secure-smart",
       "url": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/data",
       "clientID": "4a71a430-0316-4e2a-8477-7671d7d3b862",
       "scope": "user/*.write" // offline_access
     },{
-      "name": "HSPC Payer Demo - Open",
+      "name": "HSPC Payer Demo (Open)",
       "type": "open",
       "url": "https://api-v5-stu3.hspconsortium.org/DaVinciDemoPayer/open"
     },{
-      "name": "DBCG - Open",
+      "name": "DBCG (Open)",
       "type": "open",
       "url": "http://measure.eval.kanvix.com/cqf-ruler/baseDstu3"
     },{
-      "name": "BCBS Alabama - Secure",
+      "name": "BCBS Alabama (Secure)",
       "type": "secure-generic",
       "url": "https://apitesttemp.bcbsal.org/fhir/stu3",
       "accessToken": "SECRETHERE"
     }
   ];
 
-  MRP.payerEndpoint = MRP.payerEndpoints[0];
+  // default configuration
+  MRP.configSetting = 0;
+  MRP.payerEndpoint = MRP.payerEndpoints[MRP.configSetting];
 
   MRP.scenarios = {
     "patient01": {
@@ -95,16 +97,11 @@ if (!MRP) {
               "reportingOrganization": {
                   "reference": "Organization/ORGANIZATIONID"
               },
-              "evaluatedResources": {
-                  "extension": [
-                      {
-                          "url": "http://hl7.org/fhir/ig/davinci/StructureDefinition/extension-referenceAny",
-                          "valueReference": {
-                              "reference": "Task/TASKID"
-                          }
-                      }
-                  ]
-              }
+              "evaluatedResource": [
+                {
+                  "reference": "Task/TASKID"
+                }
+              ]
           }
         },
         {

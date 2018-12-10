@@ -37,6 +37,7 @@ if (!MRP) {
         $('#medrec-screen').hide();
         $('#review-screen').hide();
         $('#confirm-screen').hide();
+        $('#config-screen').hide();
         $('#'+screenID).show();
     };
 
@@ -50,6 +51,16 @@ if (!MRP) {
 
     MRP.displayConfirmScreen = () => {
         MRP.displayScreen('confirm-screen');
+    };
+
+    MRP.displayConfigScreen = () => {
+        if (MRP.configSetting === "custom") {
+            $('#config-select').val("custom");
+        } else {
+            $('#config-select').val(MRP.configSetting);
+        }
+        $('#config-text').val(JSON.stringify(MRP.payerEndpoint, null, 2));
+        MRP.displayScreen('config-screen');
     };
 
     MRP.displayReviewScreen = () => {
@@ -74,6 +85,12 @@ if (!MRP) {
         MRP.displayScreen('review-screen');
     }
 
+    MRP.displayErrorScreen = (title, message) => {
+        $('#error-title').html(title);
+        $('#error-message').html(message);
+        MRP.displayScreen('error-screen');
+    }
+
     MRP.disable = (id) => {
         $("#"+id).prop("disabled",true);
     };
@@ -93,66 +110,69 @@ if (!MRP) {
     };
 
     MRP.loadData = (client) => {
-        MRP.client = client;
-        let pid = MRP.client.patient.id;
-        let slists = MRP.scenarios[pid].lists;
+        try {
+            MRP.client = client;
+            let pid = MRP.client.patient.id;
+            let slists = MRP.scenarios[pid].lists;
 
-        $('#scenario-intro').html(MRP.scenarios[pid].description);
-        MRP.displayIntroScreen();
-        // TODO: implement error handling for missing scenarios
+            $('#scenario-intro').html(MRP.scenarios[pid].description);
+            MRP.displayIntroScreen();
 
-        MRP.client.patient.read().then((pt) => {
-            MRP.patient = pt;
-            MRP.displayPatient (pt);
-        });
+            MRP.client.patient.read().then((pt) => {
+                MRP.patient = pt;
+                MRP.displayPatient (pt);
+            });
 
-        MRP.client.patient.api.fetchAll(
-            { type: "List" }
-        ).then((lists) => {
-            let medPromises = [];
-            lists.filter((list) => slists.find(l => l === list.id))
-                .forEach((l) => {
-                    $('#lists1').append("<h4>" + l.title + " - " + l.date + "</h4>" +
-                                        "<p><div class='dvt'><table class='table'><thead><tr>" +
-                                        "<th>Medication</th><th>Dosage</th><th>Route</th><th>Status</th>" +
-                                        "</tr></thead><tbody id='" + l.id + "'></tbody></table></div></p>");
-                    if (l.entry) {
-                        let promises = l.entry.map((e) => {
-                            let medID = e.item.reference.split("/")[1];
-                            return MRP.client.patient.api.read({
-                                type: "MedicationRequest", 
-                                id: medID
-                            }).then(r => Promise.resolve({
-                                res: r,
-                                lid: l.id
-                            }));
-                        });
-                        medPromises = medPromises.concat(promises);   
-                    }
-                });
-
-            Promise
-                .all(medPromises)
-                .then((res) => {
-                    res.forEach((r) => {
-                        let med = r.res.data;
-                        let medName = MRP.getMedicationName(med.medicationCodeableConcept.coding);
-                        let dosage = med.dosageInstruction[0].text; // TODO: Construct dosage from structured SIG
-                        let route = 'oral';  // TODO: Get route from Med resource
-                        let status = med.status; // TODO: Make use of status
-                        let medid = med.id;
-                        MRP.reconciledMeds.push ({name: medName, id:medid, dosage: dosage, route: route, status:"active"});
-                        // TODO: medid for the purposes of the list should be listid+medid to avoid collisions
-                        $('#' + r.lid).append("<tr><td class='medtd'>" + medName + "</td><td>" + dosage + "</td><td>" + 
-                                            route + "</td><td><select class='custom-select' id='" + 
-                                            medid + "'><option value='active'>Active</option>" +
-                                            "<option value='stop'>Stop</option><option value='hold'>On-hold</option>" +
-                                            "</select></td></tr>");
+            MRP.client.patient.api.fetchAll(
+                { type: "List" }
+            ).then((lists) => {
+                let medPromises = [];
+                lists.filter((list) => slists.find(l => l === list.id))
+                    .forEach((l) => {
+                        $('#lists1').append("<h4>" + l.title + " - " + l.date + "</h4>" +
+                                            "<p><div class='dvt'><table class='table'><thead><tr>" +
+                                            "<th>Medication</th><th>Dosage</th><th>Route</th><th>Status</th>" +
+                                            "</tr></thead><tbody id='" + l.id + "'></tbody></table></div></p>");
+                        if (l.entry) {
+                            let promises = l.entry.map((e) => {
+                                let medID = e.item.reference.split("/")[1];
+                                return MRP.client.patient.api.read({
+                                    type: "MedicationRequest", 
+                                    id: medID
+                                }).then(r => Promise.resolve({
+                                    res: r,
+                                    lid: l.id
+                                }));
+                            });
+                            medPromises = medPromises.concat(promises);   
+                        }
                     });
-                    $("#spinner").hide();
-                    $("#meds").show();
-                });
-        });
+
+                Promise
+                    .all(medPromises)
+                    .then((res) => {
+                        res.forEach((r) => {
+                            let med = r.res.data;
+                            let medName = MRP.getMedicationName(med.medicationCodeableConcept.coding);
+                            let dosage = med.dosageInstruction[0].text; // TODO: Construct dosage from structured SIG
+                            let route = 'oral';  // TODO: Get route from Med resource
+                            let status = med.status; // TODO: Make use of status
+                            let medid = med.id;
+                            MRP.reconciledMeds.push ({name: medName, id:medid, dosage: dosage, route: route, status:"active"});
+                            // TODO: medid for the purposes of the list should be listid+medid to avoid collisions
+                            $('#' + r.lid).append("<tr><td class='medtd'>" + medName + "</td><td>" + dosage + "</td><td>" + 
+                                                route + "</td><td><select class='custom-select' id='" + 
+                                                medid + "'><option value='active'>Active</option>" +
+                                                "<option value='stop'>Stop</option><option value='hold'>On-hold</option>" +
+                                                "</select></td></tr>");
+                        });
+                        $("#spinner").hide();
+                        $("#meds").show();
+                    });
+            });
+        } catch (err) {
+            MRP.displayErrorScreen("Failed to load scenario", "Please make sure to launch the app with one of the following sample patients: " + Object.keys(MRP.scenarios).join(", "));
+        }
     };
 
     MRP.reconcile = () => {
@@ -173,7 +193,6 @@ if (!MRP) {
 
         let orgID = MRP.patient.managingOrganization.reference.split('/')[1];
         let locID = MRP.scenarios[MRP.client.patient.id].location;
-        // TODO: handle missing scenarios
 
         Promise.all([
             MRP.client.user.read(),
@@ -220,7 +239,7 @@ if (!MRP) {
                 measurereport.resource.period.start = timestamp;
                 measurereport.resource.period.end = timestamp;
                 measurereport.resource.reportingOrganization = "Organization/" + organization.resource.id;
-                measurereport.resource.evaluatedResources.extension[0].valueReference.reference = "Task/" + task.resource.id;
+                measurereport.resource.evaluatedResource[0].reference = "Task/" + task.resource.id;
                 task.resource.for.reference = "Patient/" + patient.resource.id;
                 task.resource.context.reference = "Encounter/" + encounter.resource.id;
                 task.resource.authoredOn = timestamp;
@@ -281,6 +300,7 @@ if (!MRP) {
     };
 
     MRP.initialize = (client) => {
+        MRP.loadConfig();
         if (sessionStorage.operationPayload) {
             if (JSON.parse(sessionStorage.tokenResponse).refresh_token) {
                 let state = JSON.parse(sessionStorage.tokenResponse).state;
@@ -295,34 +315,42 @@ if (!MRP) {
         }
     };
 
+    MRP.loadConfig = () => {
+        let configText = window.localStorage.getItem("mrp-app-config");
+        if (configText) {
+            let conf = JSON.parse (configText);
+            if (conf['custom']) {
+                MRP.payerEndpoint = conf['custom'];
+                MRP.configSetting = "custom";
+            } else {
+                MRP.payerEndpoint = MRP.payerEndpoints[conf['selection']];
+                MRP.configSetting = conf['selection'];
+            }
+        }
+    }
+
     MRP.finalize = () => {
         let promise;
 
-        if (MRP.payerEndpoint.type === "open") {
-            promise = $.ajax({
-                type: 'POST',
-                url: MRP.payerEndpoint.url + MRP.submitEndpoint,
-                data: JSON.stringify(MRP.operationPayload),
-                contentType: "application/fhir+json"
-            }).then(MRP.finalize);
-        } else {
-            promise = $.ajax({
-                type: 'POST',
-                url: MRP.payerEndpoint.url + MRP.submitEndpoint,
-                data: JSON.stringify(MRP.operationPayload),
-                contentType: "application/fhir+json",
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader ("Authorization", "Bearer " + MRP.payerEndpoint.accessToken);
-                }
-            });
+        var config = {
+            type: 'POST',
+            url: MRP.payerEndpoint.url + MRP.submitEndpoint,
+            data: JSON.stringify(MRP.operationPayload),
+            contentType: "application/fhir+json"
+        };
+
+        if (MRP.payerEndpoint.type !== "open") {
+            config['beforeSend'] = function (xhr) {
+                xhr.setRequestHeader ("Authorization", "Bearer " + MRP.payerEndpoint.accessToken);
+            };
         }
-        //TODO: add error handling
+
+        promise = $.ajax(config);
 
         promise.then(() => {
             console.log (JSON.stringify(MRP.operationPayload, null, 2));
             MRP.displayConfirmScreen();
-        });
-
+        }, () => MRP.displayErrorScreen("Measure report submission failed", "Please check the submit endpoint configuration"));
     }
 
     $('#chk-post-discharge').bootstrapToggle({
@@ -334,6 +362,41 @@ if (!MRP) {
     $('#btn-start').click(MRP.displayMedRecScreen);
     $('#btn-edit').click(MRP.displayMedRecScreen);
     $('#btn-submit').click(MRP.reconcile);
+    $('#btn-configuration').click(MRP.displayConfigScreen);
+    $('#btn-config').click(function () {
+        let selection = $('#config-select').val();
+        if (selection !== 'custom') {
+            window.localStorage.setItem("mrp-app-config", JSON.stringify({'selection': parseInt(selection)}));
+        } else {
+            let configtext = $('#config-text').val();
+            let myconf;
+            try {
+                myconf = JSON.parse(configtext);
+            } catch {
+                alert ("Huston, we have a problem!");
+            }
+            window.localStorage.setItem("mrp-app-config", JSON.stringify({'custom': myconf}));
+        }
+        MRP.loadConfig();
+        MRP.displayReviewScreen();
+    });
+
+    MRP.payerEndpoints.forEach((e, id) => {
+        $('#config-select').append("<option value='" + id + "'>" + e.name + "</option>");
+    });
+
+    $('#config-select').append("<option value='custom'>Custom</option>");
+    $('#config-text').val(JSON.stringify(MRP.payerEndpoints[0],null,"   "));
+
+    $('#config-select').on('change', function() {
+        if (this.value !== "custom") {
+            $('#config-text').val(JSON.stringify(MRP.payerEndpoints[parseInt(this.value)],null,2));
+        }
+    });
+
+    $('#config-text').bind('input propertychange', () => {
+        $('#config-select').val('custom');
+    });
 
     FHIR.oauth2.ready(MRP.initialize);
 

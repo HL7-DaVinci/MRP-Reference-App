@@ -18,11 +18,16 @@ td {
     margin-left: 10px;
 }
 
-#intro-screen, #confirm-screen {
+#intro-screen, #confirm-screen, #config-screen {
     align-self: center;
     width: 700px;
 }
 
-#intro-screen, #medrec-screen, #review-screen, #confirm-screen, #meds {
+.screen, #meds {
     display: none;
+}
+
+#config-text {
+    width: 660px;
+    height: 200px;
 }
