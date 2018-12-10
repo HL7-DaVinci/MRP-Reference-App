@@ -155,11 +155,12 @@ if (!MRP) {
                             let med = r.res.data;
                             let medName = MRP.getMedicationName(med.medicationCodeableConcept.coding);
                             let dosage = med.dosageInstruction[0].text; // TODO: Construct dosage from structured SIG
-                            let route = 'oral';  // TODO: Get route from Med resource
+                            let routeCode = med.dosageInstruction[0].route.coding[0]; // TODO: do not assume first dosageInstruction, coding, etc is relevant (throughout the app)
+                            let route = (routeCode.system === "http://snomed.info/sct" && routeCode.code === "26643006") ? "oral" : "other";
                             let status = med.status; // TODO: Make use of status
                             let medid = med.id;
                             MRP.reconciledMeds.push ({name: medName, id:medid, dosage: dosage, route: route, status:"active"});
-                            // TODO: medid for the purposes of the list should be listid+medid to avoid collisions
+                            // TODO: consider changing medid to something like listid+medid for better collision avoidance
                             $('#' + r.lid).append("<tr><td class='medtd'>" + medName + "</td><td>" + dosage + "</td><td>" + 
                                                 route + "</td><td><select class='custom-select' id='" + 
                                                 medid + "'><option value='active'>Active</option>" +
@@ -209,7 +210,7 @@ if (!MRP) {
             MRP.client.patient.api.read({type: "Organization", id: payorOrgID}).then(function(payorOrganization) {
                 let measurereport = MRP.operationPayload.parameter.find(e => e.name === "measure-report");
 
-                // TODO: consider generating from a template instead of extracting from sample
+                // TODO: consider generating using descrete templates instead of extracting from sample
                 let task = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Task");
                 let patient = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Patient");
                 let location = MRP.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Location");
@@ -233,7 +234,7 @@ if (!MRP) {
                 location.resource = res[2].data;
                 coverage.resource = coverageResource;
     
-                // TODO: look into a nicer resource generation lib
+                // TODO: look into a more elegant resource generation approach
                 measurereport.resource.patient.reference = "Patient/" + patient.resource.id;
                 measurereport.resource.date = timestamp;
                 measurereport.resource.period.start = timestamp;
@@ -260,13 +261,7 @@ if (!MRP) {
                 // Question: Should payor even be submitted here explicitly? If yes, then how would it get into the Payer sandbox?
             
                 if (! $('#chk-post-discharge').is(':checked')) {
-                    task.resource.code.coding = [
-                        {
-                            "system": "http://snomed.info/sct",
-                            "code": "430193006",
-                            "display": "Generic Medication Reconciliation"
-                        }
-                    ];
+                    task.resource.code.coding = [MRP.postDischargeReconciliationCoding];
                 }
             
                 MRP.operationPayload.parameter = [measurereport, task, patient, location, practitioner, organization, encounter, coverage, payor];
@@ -277,6 +272,7 @@ if (!MRP) {
                     if (MRP.payerEndpoint.type === "secure-smart") {
                         sessionStorage.operationPayload = JSON.stringify(MRP.operationPayload);
                         if (localStorage.tokenResponse) {
+                            // load state from localStorage
                             let state = JSON.parse(localStorage.tokenResponse).state;
                             sessionStorage.tokenResponse = localStorage.tokenResponse;
                             sessionStorage[state] = localStorage[state];
@@ -293,7 +289,6 @@ if (!MRP) {
                     } else {
                         MRP.finalize();
                     }
-
                 });
             });
         });
@@ -303,6 +298,7 @@ if (!MRP) {
         MRP.loadConfig();
         if (sessionStorage.operationPayload) {
             if (JSON.parse(sessionStorage.tokenResponse).refresh_token) {
+                // save state in localStorage
                 let state = JSON.parse(sessionStorage.tokenResponse).state;
                 localStorage.tokenResponse = sessionStorage.tokenResponse;
                 localStorage[state] = sessionStorage[state];
@@ -372,10 +368,10 @@ if (!MRP) {
             let myconf;
             try {
                 myconf = JSON.parse(configtext);
-            } catch {
-                alert ("Huston, we have a problem!");
+                window.localStorage.setItem("mrp-app-config", JSON.stringify({'custom': myconf}));
+            } catch (err) {
+                alert ("Unable to parse configuration. Please try again.");
             }
-            window.localStorage.setItem("mrp-app-config", JSON.stringify({'custom': myconf}));
         }
         MRP.loadConfig();
         MRP.displayReviewScreen();
@@ -384,7 +380,6 @@ if (!MRP) {
     MRP.payerEndpoints.forEach((e, id) => {
         $('#config-select').append("<option value='" + id + "'>" + e.name + "</option>");
     });
-
     $('#config-select').append("<option value='custom'>Custom</option>");
     $('#config-text').val(JSON.stringify(MRP.payerEndpoints[0],null,"   "));
 

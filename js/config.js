@@ -220,4 +220,10 @@ if (!MRP) {
       ]
   };
 
+  MRP.postDischargeReconciliationCoding = {
+    "system": "http://snomed.info/sct",
+    "code": "430193006",
+    "display": "Generic Medication Reconciliation"
+  };
+
 }());
