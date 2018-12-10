@@ -2,10 +2,6 @@ body {
     margin: 20px;
 }
 
-.dvt {
-    width: 700px;
-}
-
 .medtd {
     width: 350px;
 }
@@ -18,12 +14,12 @@ td {
     margin-left: 10px;
 }
 
-#intro-screen, #confirm-screen, #config-screen {
+#intro-screen, #confirm-screen, #config-screen, .dvt {
     align-self: center;
     width: 700px;
 }
 
-.screen, #meds {
+.screen, #medrec-meds {
     display: none;
 }
 

@@ -12,7 +12,6 @@
      <script src="js/config.js"></script>
  </head>
  <body>
-
     <div id="intro-screen" class="card alert-info screen">
         <div class="card-body">
             <h5 class="card-title">Scenario Description</h5>
@@ -21,23 +20,23 @@
         </div>
     </div>
     <div id="medrec-screen" class="screen">
-        <h1>Medications for <span id="name1"></span></h1>
+        <h1>Medications for <span id="medrec-name"></span></h1>
         <div id="spinner">Loading...</div>
-        <div id="meds">
-            <div id="lists1"></div>
+        <div id="medrec-meds">
+            <div id="medrec-lists"></div>
             <div>
                 <button type="button" class="btn btn-primary" id="btn-review">Review reconciled medications</button>
             </div>
         </div>
     </div>
     <div id="review-screen" class="screen">
-        <h1>Reconciled Medications for <span id="name2"></span></h1>
+        <h1>Reconciled Medications for <span id="review-name"></span></h1>
         <div id="discharge-selection"><p>
             This medication reconciliation was done post-discharge
             <input type="checkbox" id="chk-post-discharge" checked="checked">
         </p></div>
-        <div id="lists2"><p><div class='dvt'>
-            <table class='table alert-warning'><thead><tr><th>Medication</th><th>Dosage</th><th>Route</th></tr></thead><tbody id='finallist'></tbody></table>
+        <div id="review-lists"><p><div class='dvt'>
+            <table class='table alert-warning'><thead><tr><th>Medication</th><th>Dosage</th><th>Route</th></tr></thead><tbody id='final-list'></tbody></table>
         </div></p></div>
         <div>
             <button type="button" class="btn btn-secondary" id="btn-edit">Edit medications</button>
@@ -71,8 +70,6 @@
             <p class='card-text' id='error-message'></p>
         </div>
     </div>
- 
     <script src="js/app.js"></script>
-
  </body>
 </html>

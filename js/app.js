@@ -28,7 +28,7 @@ if (!MRP) {
     };
 
     MRP.displayPatient = (pt) => {
-        $('#name1, #name2').html(MRP.getPatientName(pt));
+        $('#medrec-name, #review-name').html(MRP.getPatientName(pt));
     };
 
     MRP.displayScreen = (screenID) => {
@@ -64,7 +64,7 @@ if (!MRP) {
     };
 
     MRP.displayReviewScreen = () => {
-        $("#finallist").empty();
+        $("#final-list").empty();
         MRP.newListResource.entry = [];
         MRP.reconciledMeds
                     .sort((a,b) => a.name >= b.name)
@@ -76,7 +76,7 @@ if (!MRP) {
                                     "reference": "MedicationRequest/" + med.id
                                 }
                             });
-                            $("#finallist").append("<tr><td class='medtd'>" + med.name + 
+                            $("#final-list").append("<tr><td class='medtd'>" + med.name + 
                                                 "</td><td>" + med.dosage +
                                                 "</td><td>" + med.route + "</td></tr>");
                         }
@@ -129,7 +129,7 @@ if (!MRP) {
                 let medPromises = [];
                 lists.filter((list) => slists.find(l => l === list.id))
                     .forEach((l) => {
-                        $('#lists1').append("<h4>" + l.title + " - " + l.date + "</h4>" +
+                        $('#medrec-lists').append("<h4>" + l.title + " - " + l.date + "</h4>" +
                                             "<p><div class='dvt'><table class='table'><thead><tr>" +
                                             "<th>Medication</th><th>Dosage</th><th>Route</th><th>Status</th>" +
                                             "</tr></thead><tbody id='" + l.id + "'></tbody></table></div></p>");
@@ -167,7 +167,7 @@ if (!MRP) {
                                                 "</select></td></tr>");
                         });
                         $("#spinner").hide();
-                        $("#meds").show();
+                        $("#medrec-meds").show();
                     });
             });
         } catch (err) {
