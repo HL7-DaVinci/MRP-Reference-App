@@ -171,7 +171,7 @@ if (!MRP) {
                     });
             });
         } catch (err) {
-            MRP.displayErrorScreen("Failed to load scenario", "Please make sure to launch the app with one of the following sample patients: " + Object.keys(MRP.scenarios).join(", "));
+            MRP.displayErrorScreen("Failed to initialize scenario", "Please make sure to launch the app with one of the following sample patients: " + Object.keys(MRP.scenarios).join(", "));
         }
     };
 
