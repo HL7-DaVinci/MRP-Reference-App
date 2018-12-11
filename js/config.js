@@ -6,7 +6,7 @@ if (!MRP) {
 (function () {
 
   MRP.clientSettings = {
-    "client_id": "CLIENTIDHERE",
+    "client_id": "CLIENTID",
     "scope"    : "patient/*.* openid profile"
   };
 
@@ -35,7 +35,7 @@ if (!MRP) {
   ];
 
   // default configuration
-  MRP.configSetting = 1; // HSPC Payer Demo (Open)
+  MRP.configSetting = 0;
   MRP.payerEndpoint = MRP.payerEndpoints[MRP.configSetting];
 
   MRP.scenarios = {
@@ -112,6 +112,12 @@ if (!MRP) {
                 "profile": ["http://hl7.org/fhir/us/hedis/StructureDefinition/hedis-task"]
               },
               "id": "TASKID",
+              "identifier" : [
+                {
+                  "system" : "http://www.acme.org/tasks",
+                  "value" : "12345"
+                }
+              ],            
               "status": "completed",
               "intent": "plan",
               "priority": "routine",
