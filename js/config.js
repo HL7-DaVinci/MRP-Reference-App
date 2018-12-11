@@ -6,7 +6,7 @@ if (!MRP) {
 (function () {
 
   MRP.clientSettings = {
-    "client_id": "CLIENTID",
+    "client_id": "CLIENTIDHERE",
     "scope"    : "patient/*.* openid profile"
   };
 
@@ -35,7 +35,7 @@ if (!MRP) {
   ];
 
   // default configuration
-  MRP.configSetting = 0;
+  MRP.configSetting = 1; // HSPC Payer Demo (Open)
   MRP.payerEndpoint = MRP.payerEndpoints[MRP.configSetting];
 
   MRP.scenarios = {
