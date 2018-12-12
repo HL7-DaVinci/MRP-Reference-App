@@ -239,7 +239,7 @@ if (!MRP) {
                 measurereport.resource.date = timestamp;
                 measurereport.resource.period.start = timestamp;
                 measurereport.resource.period.end = timestamp;
-                measurereport.resource.reportingOrganization = "Organization/" + organization.resource.id;
+                measurereport.resource.reportingOrganization.reference = "Organization/" + organization.resource.id;
                 measurereport.resource.evaluatedResource[0].reference = "Task/" + task.resource.id;
                 task.resource.for.reference = "Patient/" + patient.resource.id;
                 task.resource.context.reference = "Encounter/" + encounter.resource.id;
