@@ -240,7 +240,7 @@ if (!MRP) {
                 measurereport.resource.period.start = timestamp;
                 measurereport.resource.period.end = timestamp;
                 measurereport.resource.reportingOrganization.reference = "Organization/" + organization.resource.id;
-                measurereport.resource.evaluatedResource[0].reference = "Task/" + task.resource.id;
+                measurereport.resource.evaluatedResources.extension[0].valueReference.reference = "Task/" + task.resource.id;
                 task.resource.for.reference = "Patient/" + patient.resource.id;
                 task.resource.context.reference = "Encounter/" + encounter.resource.id;
                 task.resource.authoredOn = timestamp;
@@ -250,7 +250,7 @@ if (!MRP) {
                 encounter.resource.period.start = timestamp;
                 encounter.resource.period.end = timestamp;
                 encounter.resource.subject.reference = "Patient/" + patient.resource.id;
-                encounter.resource.location.reference = "Location/" + location.resource.id;
+                encounter.resource.location[0].location.reference = "Location/" + location.resource.id;
                 encounter.resource.participant[0].individual.reference = "Practitioner/" + practitioner.resource.id;
                 encounter.resource.serviceProvider.reference = "Organization/" + organization.resource.id;
                 patient.resource.managingOrganization = "Organization/" + organization.resource.id;

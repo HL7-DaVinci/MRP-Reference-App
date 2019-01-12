@@ -97,11 +97,16 @@ if (!MRP) {
               "reportingOrganization": {
                   "reference": "Organization/ORGANIZATIONID"
               },
-              "evaluatedResource": [
-                {
-                  "reference": "Task/TASKID"
-                }
-              ]
+              "evaluatedResources": {
+                "extension": [
+                  {
+                    "url": "http://hl7.org/fhir/us/davinci-deqm/StructureDefinition/extension-referenceAny",
+                    "valueReference": {
+                      "reference": "Task/TASKID"
+                    }
+                  }
+                ]
+              }
           }
         },
         {
@@ -202,9 +207,11 @@ if (!MRP) {
               "subject": {
                 "reference": "Patient/PATIENTID"
               },
-              "location": {
-                "reference": "Location/LOCATIONID"
-              },
+              "location": [{
+                "location": {
+                   "reference": "Location/LOCATIONID"
+                }
+              }],
               "participant": [
                 {
                   "individual": {
