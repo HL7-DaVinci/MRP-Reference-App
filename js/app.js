@@ -253,7 +253,7 @@ if (!MRP) {
                 encounter.resource.location[0].location.reference = "Location/" + location.resource.id;
                 encounter.resource.participant[0].individual.reference = "Practitioner/" + practitioner.resource.id;
                 encounter.resource.serviceProvider.reference = "Organization/" + organization.resource.id;
-                patient.resource.managingOrganization = "Organization/" + organization.resource.id;
+                patient.resource.managingOrganization.reference = "Organization/" + organization.resource.id;
                 coverage.resource.policyHolder.reference = "Patient/" + patient.resource.id;
                 coverage.resource.subscriber.reference = "Patient/" + patient.resource.id;
                 coverage.resource.beneficiary.reference = "Patient/" + patient.resource.id;
