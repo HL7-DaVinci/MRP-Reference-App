@@ -29,9 +29,16 @@ if (!MRP) {
     },{
       "name": "BCBS Alabama (Secure)",
       "type": "secure-generic",
-      "url": "https://apitesttemp.bcbsal.org/fhir/stu3",
+      "url": "https://api2.bcbsal.org/fhir/stu3",
       "accessToken": "SECRETHERE"
-    }
+    },
+    {
+      "name": "CareEvolution (Secure)",
+      "type": "secure-smart",
+      "url": "https://b3-fhirmeasuresendpoints-3629-consumers-sprint-s.b3-deploys.com/FhirMeasuresEndPoints.Adapter1.WebClient/api/fhir",
+      "clientID": "HSPC",
+      "scope": "user/*.read"
+   }
   ];
 
   // default configuration
