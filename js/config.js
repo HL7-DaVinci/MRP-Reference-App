@@ -31,14 +31,21 @@ if (!MRP) {
       "type": "secure-generic",
       "url": "https://api2.bcbsal.org/fhir/stu3",
       "accessToken": "SECRETHERE"
-    },
-    {
+    },{
       "name": "CareEvolution (Secure)",
       "type": "secure-smart",
       "url": "https://b3-fhirmeasuresendpoints-3629-consumers-sprint-s.b3-deploys.com/FhirMeasuresEndPoints.Adapter1.WebClient/api/fhir",
       "clientID": "HSPC",
       "scope": "user/*.read"
-   }
+    },{
+      "name": "Humana (Open)",
+      "type": "open",
+      "url": "https://fhirendpoint.azurewebsites.net/baseSTU3"
+    },{
+      "name": "IBC (Open)",
+      "type": "open",
+      "url": "https://TBD"
+    }
   ];
 
   // default configuration
