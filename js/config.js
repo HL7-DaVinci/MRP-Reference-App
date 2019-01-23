@@ -46,7 +46,7 @@ if (!MRP) {
       "type": "open",
       "url": "https://TBD"
     },{
-      "name": "Edifecs – GuideWell Demo (Open)",
+      "name": "Edifecs - GuideWell Demo (Open)",
       "type": "open",
       "url": "https://fhir.collablynk.com"
     }
