@@ -45,6 +45,10 @@ if (!MRP) {
       "name": "IBC (Open)",
       "type": "open",
       "url": "https://TBD"
+    },{
+      "name": "Edifecs – GuideWell Demo (Open)",
+      "type": "open",
+      "url": "https://fhir.collablynk.com"
     }
   ];
 
@@ -67,6 +71,11 @@ if (!MRP) {
       "lists": ["list05", "list06"],
       "location": "location03",
       "description": "Ms. Hartman is a 35y.o. previously healthy female who was discharged from the hospital 10 days prior following a 2 day admission for acute pyelonephritis. She was discharged on oral antibiotics and instructed to follow-up with her primary care physician within 2 weeks.<br/><br/>As the follow-up physician, you will be reconciling Ms. Hartman's discharge medication list against his last outpatient medication list."
+    },
+    "patient04": {
+      "lists": ["list07", "list08"],
+      "location": "location01",
+      "description": "Viet to put in"
     }
   }
 
