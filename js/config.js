@@ -76,6 +76,11 @@ if (!MRP) {
       "lists": ["list07", "list08"],
       "location": "location01",
       "description": "Viet to put in"
+    },
+    "cf-1548845717752": {
+      "lists": ["cf-1549030480855", "cf-1549030685865"],
+      "location": "location01",
+      "description": "You the primary care provider who is seeing Dara Kim for a discharge follow-up appointment. She was admitted to the hospital for evaluation of chest pain. She was found to have coronary disease and received a stent. She was discharged seven days ago. During this visit you will be performing a post-discharge medication reconciliation and attest to completing the reconciliation."
     }
   }
 
