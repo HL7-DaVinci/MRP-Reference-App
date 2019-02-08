@@ -38,9 +38,19 @@ if (!MRP) {
       "clientID": "HSPC",
       "scope": "user/*.read"
     },{
+      "name": "TS Proxy - CareEvolution (Secure)",
+      "type": "secure-smart",
+      "url": "https://touchstone.aegis.net:57827/FhirMeasuresEndPoints.Adapter1.WebClient/api/fhir",
+      "clientID": "HSPC",
+      "scope": "user/*.read"
+    },{
       "name": "Humana (Open)",
       "type": "open",
-      "url": "https://fhirendpoint.azurewebsites.net/baseSTU3"
+      "url": "https://deqm-dot-hum-hcs-rapid-fhir-sbx.appspot.com/baseSTU3"
+    },{
+      "name": "TS Proxy - Humana (Open)",
+      "type": "open",
+      "url": "https://touchstone.aegis.net:54868/baseSTU3"
     },{
       "name": "IBC (Open)",
       "type": "open",
@@ -49,6 +59,18 @@ if (!MRP) {
       "name": "Edifecs - GuideWell Demo (Open)",
       "type": "open",
       "url": "https://fhir.collablynk.com"
+    },{
+      "name": "TS Proxy - Edifecs - GuideWell Demo (Open)",
+      "type": "open",
+      "url": "https://touchstone.aegis.net:59200"
+    },{
+      "name": "UnitedHealthcare (Open)",
+      "type": "open",
+      "url": "https://fhirreststaging.azurewebsites.net/fhir"
+    },{
+      "name": "TS Proxy - UnitedHealthcare (Open)",
+      "type": "open",
+      "url": "https://touchstone.aegis.net:57798/fhir"
     }
   ];
 
