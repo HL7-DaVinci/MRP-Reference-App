@@ -5,7 +5,7 @@ Please see http://build.fhir.org/ig/HL7/davinci-deqm/mrp.html for details.
 
 ## Configure
 
-Update `js/config.js` with your app's OAuth client ID.
+Update `js/config.js` with your app's OAuth client ID and other related configuration settings.
 
 ## Install & Run
 Install NodeJS. Then fetch the app dependencies in the app directory and launch the app server:
