@@ -3,8 +3,12 @@
 This application demonstrates the Da Vinci MRP medication reconcilation use case.
 Please see http://build.fhir.org/ig/HL7/davinci-deqm/mrp.html for details.
 
+## Configure
+
+Update `js/config.js` with your app's OAuth client ID.
+
 ## Install & Run
-Install NodeJS, Go to the app directory and run:
+Install NodeJS. Then fetch the app dependencies in the app directory and launch the app server:
 ```sh
 npm i
 npm start
