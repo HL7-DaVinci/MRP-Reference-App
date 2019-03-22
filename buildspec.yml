@@ -1,0 +1,27 @@
+# Do not change version. This is the version of aws buildspec, not the version of your buildspec file.
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing dependencies...
+      - npm install
+  pre_build:
+    commands:
+      - echo Nothing to do for pre_build...
+  build:
+    commands:
+      - echo Nothing to do for build...
+  post_build:
+    commands:
+      - echo Build completed on `date`
+# Include only the files required at runtime.
+artifacts:
+  files:
+    - index.html
+    - launch.html
+    - favicon.ico
+    - node_modules/**/*
+    - css/**/*
+    - js/**/*
+    - lib/**/*
