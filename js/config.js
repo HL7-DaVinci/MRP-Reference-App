@@ -16,7 +16,7 @@ if (!MRP) {
       "name": "HSPC Payer Demo (Secure)",
       "type": "secure-smart",
       "url": "https://api-v8-stu3.hspconsortium.org/DaVinciMRPPayer/data",
-      "clientID": "4a71a430-0316-4e2a-8477-7671d7d3b862",
+      "clientID": "09bce41f-ebb6-4b00-93ae-464a1625bf31",
       "scope": "user/*.write" // offline_access
     },{
       "name": "HSPC Payer Demo (Open)",
