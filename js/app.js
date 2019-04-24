@@ -124,11 +124,10 @@ if (!MRP) {
             });
 
             MRP.client.patient.api.fetchAll(
-                { type: "List" }
+                { type: "List", query: {_id: slists.join(",")} }
             ).then((lists) => {
                 let medPromises = [];
-                lists.filter((list) => slists.find(l => l === list.id))
-                    .forEach((l) => {
+                lists.forEach((l) => {
                         $('#medrec-lists').append("<h4>" + l.title + " - " + l.date + "</h4>" +
                                             "<p><div class='dvt'><table class='table'><thead><tr>" +
                                             "<th>Medication</th><th>Dosage</th><th>Route</th><th>Status</th>" +
