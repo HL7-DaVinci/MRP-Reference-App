@@ -15,13 +15,13 @@ if (!MRP) {
   MRP.payerEndpoints = [{
       "name": "HSPC Payer Demo (Secure)",
       "type": "secure-smart",
-      "url": "https://api-v8-stu3.hspconsortium.org/DaVinciDemoPayer/data",
+      "url": "https://api-v8-stu3.hspconsortium.org/DaVinciMRPPayer/data",
       "clientID": "4a71a430-0316-4e2a-8477-7671d7d3b862",
       "scope": "user/*.write" // offline_access
     },{
       "name": "HSPC Payer Demo (Open)",
       "type": "open",
-      "url": "https://api-v8-stu3.hspconsortium.org/DaVinciDemoPayer/open"
+      "url": "https://api-v8-stu3.hspconsortium.org/DaVinciMRPPayer/open"
     },{
       "name": "DBCG (Open)",
       "type": "open",
