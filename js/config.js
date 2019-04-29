@@ -12,7 +12,7 @@ if (!MRP) {
     "scope"    : "patient/*.* openid profile"
   }
 
-  MRP.submitEndpoint = "/Measure/measure-mrp/$submit-data"
+  MRP.submitEndpoint = "/Measure/measure-mrp/$submit-data";
   
   MRP.payerEndpoints = [{
       "name": "HSPC Payer Demo (Secure)",
@@ -77,8 +77,8 @@ if (!MRP) {
   ]
 
   // default configuration
-  MRP.configSetting = 1 // HSPC Payer Demo (Open)
-  MRP.payerEndpoint = MRP.payerEndpoints[MRP.configSetting]
+  MRP.configSetting = 1; // HSPC Payer Demo (Open)
+  MRP.payerEndpoint = MRP.payerEndpoints[MRP.configSetting];
 
   MRP.scenarios = {
     "patient01": {
