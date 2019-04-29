@@ -1,22 +1,24 @@
+'use strict';
+
 var MRP;
 if (!MRP) {
     MRP = {};
 }
 
-(function () {
+{
 
   MRP.clientSettings = {
     "client_id": "CLIENTIDHERE",
     "scope"    : "patient/*.* openid profile"
-  };
+  }
 
-  MRP.submitEndpoint = "/Measure/measure-mrp/$submit-data";
+  MRP.submitEndpoint = "/Measure/measure-mrp/$submit-data"
   
   MRP.payerEndpoints = [{
       "name": "HSPC Payer Demo (Secure)",
       "type": "secure-smart",
       "url": "https://api-v8-stu3.hspconsortium.org/DaVinciMRPPayer/data",
-      "clientID": "09bce41f-ebb6-4b00-93ae-464a1625bf31",
+      "clientID": "CLIENTIDHERE",
       "scope": "user/*.write" // offline_access
     },{
       "name": "HSPC Payer Demo (Open)",
@@ -72,11 +74,11 @@ if (!MRP) {
       "type": "open",
       "url": "https://touchstone.aegis.net:57798/fhir"
     }
-  ];
+  ]
 
   // default configuration
-  MRP.configSetting = 1; // HSPC Payer Demo (Open)
-  MRP.payerEndpoint = MRP.payerEndpoints[MRP.configSetting];
+  MRP.configSetting = 1 // HSPC Payer Demo (Open)
+  MRP.payerEndpoint = MRP.payerEndpoints[MRP.configSetting]
 
   MRP.scenarios = {
     "patient01": {
@@ -117,7 +119,7 @@ if (!MRP) {
       "mode": "working",
       "title": "Reconciled Medications",
       "entry": []
-  };
+  }
 
   MRP.operationPayload = {
       "resourceType": "Parameters",
@@ -281,12 +283,12 @@ if (!MRP) {
             }
         }
       ]
-  };
+  }
 
   MRP.postDischargeReconciliationCoding = {
     "system": "http://snomed.info/sct",
     "code": "430193006",
     "display": "Generic Medication Reconciliation"
-  };
+  }
 
-}());
+}
