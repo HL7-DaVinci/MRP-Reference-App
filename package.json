@@ -1,10 +1,10 @@
 {
   "name": "mrp-app",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "scripts": {
     "start": "http-server -p 9090 -c-1"
   },
   "dependencies": {
-    "http-server": "^0.10.0"
+    "http-server": "^0.11.1"
   }
 }
