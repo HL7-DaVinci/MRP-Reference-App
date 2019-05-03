@@ -1,7 +1,7 @@
 let Config = {};
 
 Config.clientSettings = {
-  "client_id": "eafc7650-ecdb-4958-b3aa-79a5d9adf949",
+  "client_id": "8203e7c6-ce9c-415f-84fa-81c1ad8c85c7",
   "scope"    : "patient/*.* openid profile"
 }
 
@@ -11,7 +11,7 @@ Config.payerEndpoints = [{
     "name": "HSPC Payer Demo (Secure)",
     "type": "secure-smart",
     "url": "https://api-v8-stu3.hspconsortium.org/DaVinciMRPPayer/data",
-    "clientID": "b1a48465-9edb-4df0-9134-1d9d69e5bb2f",
+    "clientID": "09bce41f-ebb6-4b00-93ae-464a1625bf31",
     "scope": "user/*.write" // offline_access
   },{
     "name": "HSPC Payer Demo (Open)",
