@@ -11,6 +11,10 @@
      <link href="css/custom.css" rel="stylesheet">
  </head>
  <body>
+    <div class="header-row">
+        <img src="img/pills.jpg">
+        <div class="header-text-container"><h1>Medication Reconciliation</h1></div>
+    </div>
     <div id="intro-screen" class="card alert-info screen">
         <div class="card-body">
             <h5 class="card-title">Scenario Description</h5>
@@ -19,7 +23,7 @@
         </div>
     </div>
     <div id="medrec-screen" class="screen">
-        <h1>Medications for <span id="medrec-name"></span></h1>
+        <h2>Medications for <span id="medrec-name"></span></h2>
         <div id="spinner">Loading...</div>
         <div id="medrec-meds">
             <div id="medrec-lists"></div>
@@ -29,7 +33,7 @@
         </div>
     </div>
     <div id="review-screen" class="screen">
-        <h1>Reconciled Medications for <span id="review-name"></span></h1>
+        <h2>Reconciled Medications for <span id="review-name"></span></h2>
         <div id="discharge-selection"><p>
             This medication reconciliation was done post-discharge
             <input type="checkbox" id="chk-post-discharge" checked="checked">
