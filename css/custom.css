@@ -46,6 +46,6 @@ td {
     justify-content: center;
 }
 
-.header-row img {
-
+.header-image-container img {
+    height: 70px
 }
