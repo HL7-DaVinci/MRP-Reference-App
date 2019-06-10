@@ -10,13 +10,13 @@ Config.submitEndpoint = "/Measure/measure-mrp/$submit-data";
 Config.payerEndpoints = [{
     "name": "HSPC Payer Demo (Secure)",
     "type": "secure-smart",
-    "url": "https://api-v8-stu3.hspconsortium.org/DaVinciMRPPayer/data",
+    "url": "https://api.logicahealth.org/DaVinciMRPPayer/data",
     "clientID": "09bce41f-ebb6-4b00-93ae-464a1625bf31",
     "scope": "user/*.write" // offline_access
   },{
     "name": "HSPC Payer Demo (Open)",
     "type": "open",
-    "url": "https://api-v8-stu3.hspconsortium.org/DaVinciMRPPayer/open"
+    "url": "https://api.logicahealth.org/DaVinciMRPPayer/open"
   },{
     "name": "DBCG (Open)",
     "type": "open",
