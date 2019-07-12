@@ -270,15 +270,7 @@ MRP.reconcile = async () => {
     Config.newListResource.subject.reference = "Patient/" + MRP.client.patient.id;
     $('#confirm-screen p').append(" (" + Config.newListResource.id + ")");
 
-    await MRP.client.request({
-        url: `List/${Config.newListResource.id}`,
-            method: 'PUT',
-            body: JSON.stringify(Config.newListResource),
-            headers:{
-              'Content-Type': 'application/fhir+json'
-            }
-
-    });
+    await MRP.client.update(Config.newListResource);
 
     if (Config.payerEndpoint.type === "secure-smart") {
         sessionStorage.operationPayload = JSON.stringify(payload);
