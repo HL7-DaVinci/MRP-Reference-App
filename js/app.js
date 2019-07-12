@@ -183,9 +183,7 @@ MRP.loadData = async (client) => {
             MRP.displayPatient (pt);
         });
 
-        let lists = await MRP.client.patient.api.fetchAll(
-            { type: "List", query: {_id: slists.join(",")} }
-        );
+        let lists = await MRP.client.patient.request(`List?_id=${slists.join(",")}`,{pageLimit:0,flat:true});
         
         let medPromises = [];
         for (let l of lists) {
@@ -197,10 +195,7 @@ MRP.loadData = async (client) => {
                 let promises = l.entry.map((e) => {
                     let medID = e.item.reference.split("/")[1];
                     return (async (medID) => {
-                        let r = await MRP.client.patient.api.read({
-                            type: "MedicationRequest", 
-                            id: medID
-                        });
+                        let r = await MRP.client.request(`MedicationRequest/${medID}`);
                         return {
                             res: r,
                             lid: l.id
@@ -213,7 +208,7 @@ MRP.loadData = async (client) => {
 
         let res = await Promise.all(medPromises);
         for (let r of res) {
-            let med = r.res.data;
+            let med = r.res;
             let medName = MRP.getMedicationName(med.medicationCodeableConcept.coding);
             let dosage = med.dosageInstruction[0].text; // TODO: Construct dosage from structured SIG
             let routeCode = med.dosageInstruction[0].route.coding[0]; // TODO: do not assume first dosageInstruction, coding, etc is relevant (throughout the app)
@@ -250,21 +245,21 @@ MRP.reconcile = async () => {
 
     let res = await Promise.all([
         MRP.client.user.read(),
-        MRP.client.patient.api.read({type: "Organization", id: orgID}),
-        MRP.client.patient.api.read({type: "Location", id: locID}),
-        MRP.client.patient.api.search({type: "Coverage", query: {subscriber: MRP.client.patient.id}})
+        MRP.client.request(`Organization/${orgID}`),
+        MRP.client.request(`Location/${locID}`),
+        MRP.client.request(`Coverage?subscriber=${MRP.client.patient.id}`)
     ]);
 
-    console.assert (res[3].data.total <= 1, "No more than 1 Coverage resources found");
-    console.assert (res[3].data.total === 1, "Matching Coverage resource found");
+    console.assert (res[3].total <= 1, "No more than 1 Coverage resources found");
+    console.assert (res[3].total === 1, "Matching Coverage resource found");
 
     let practitioner = res[0];
-    let organization = res[1].data;
-    let location = res[2].data;
-    let coverage = res[3].data.entry[0].resource;
+    let organization = res[1];
+    let location = res[2];
+    let coverage = res[3].entry[0].resource;
     let payorOrgID = coverage.payor[0].reference.split('/')[1];
-    let payorOrganization = await MRP.client.patient.api.read({type: "Organization", id: payorOrgID});
-    let payor = payorOrganization.data;
+    let payorOrganization = await MRP.client.request(`Organization/${payorOrgID}`);
+    let payor = payorOrganization;
     let payload = MRP.generatePayload(MRP.patient, practitioner, organization, location, coverage, payor);
 
     // TODO: Generate new MedicationRequests etc
@@ -275,7 +270,15 @@ MRP.reconcile = async () => {
     Config.newListResource.subject.reference = "Patient/" + MRP.client.patient.id;
     $('#confirm-screen p').append(" (" + Config.newListResource.id + ")");
 
-    await MRP.client.patient.api.update({resource: Config.newListResource});
+    await MRP.client.request({
+        url: `List/${Config.newListResource.id}`,
+            method: 'PUT',
+            body: JSON.stringify(Config.newListResource),
+            headers:{
+              'Content-Type': 'application/fhir+json'
+            }
+
+    });
 
     if (Config.payerEndpoint.type === "secure-smart") {
         sessionStorage.operationPayload = JSON.stringify(payload);
@@ -287,30 +290,29 @@ MRP.reconcile = async () => {
             FHIR.oauth2.ready(MRP.initialize);
         } else {
             FHIR.oauth2.authorize({
-                "client": {
-                    "client_id": Config.payerEndpoint.clientID,
-                    "scope":  Config.payerEndpoint.scope
-                },
-                "server": Config.payerEndpoint.url
+                "client_id": Config.payerEndpoint.clientID,
+                "scope":  Config.payerEndpoint.scope,
+                "iss": Config.payerEndpoint.url
             });
         }
     } else {
-        MRP.finalize();
+        MRP.finalize(new FHIR.client(Config.payerEndpoint.url));
     }
 }
 
 MRP.initialize = (client) => {
     MRP.loadConfig();
     if (sessionStorage.operationPayload) {
-        if (JSON.parse(sessionStorage.tokenResponse).refresh_token) {
+        //client.state.tokenResponse
+        if (client.state.tokenResponse.refresh_token) {
             // save state in localStorage
-            let state = JSON.parse(sessionStorage.tokenResponse).state;
-            localStorage.tokenResponse = sessionStorage.tokenResponse;
+            let state = client.state.key;
+            localStorage.tokenResponse = client.state.tokenResponse;
             localStorage[state] = sessionStorage[state];
         }
         Config.operationPayload = JSON.parse(sessionStorage.operationPayload);
-        Config.payerEndpoint.accessToken = JSON.parse(sessionStorage.tokenResponse).access_token;
-        MRP.finalize();
+        Config.payerEndpoint.accessToken = client.state.tokenResponse.access_token;
+        MRP.finalize(client);
     } else {
         MRP.loadData(client);
     }
@@ -330,22 +332,16 @@ MRP.loadConfig = () => {
     }
 }
 
-MRP.finalize = async () => {
-    var config = {
-        type: 'POST',
-        url: Config.payerEndpoint.url + Config.submitEndpoint,
-        data: JSON.stringify(Config.operationPayload),
-        contentType: "application/fhir+json"
-    };
-
-    if (Config.payerEndpoint.type !== "open") {
-        config['beforeSend'] = (xhr) => {
-            xhr.setRequestHeader ("Authorization", "Bearer " + Config.payerEndpoint.accessToken);
-        };
-    }
-
+MRP.finalize = async (client) => {
     try {
-        await $.ajax(config);
+        await client.request({
+            method: 'POST',
+            url: Config.submitEndpoint,
+            body: JSON.stringify(Config.operationPayload),
+            headers:{
+                'Content-Type': 'application/fhir+json'
+            }
+        });
         console.log (JSON.stringify(Config.operationPayload, null, 2));
         MRP.displayConfirmScreen();
     } catch (err) {
