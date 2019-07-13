@@ -274,20 +274,25 @@ MRP.reconcile = async () => {
 
     if (Config.payerEndpoint.type === "secure-smart") {
         sessionStorage.operationPayload = JSON.stringify(payload);
-        if (localStorage.tokenResponse) {
-            // load state from localStorage
-            let state = JSON.parse(localStorage.tokenResponse).state;
-            sessionStorage.tokenResponse = localStorage.tokenResponse;
-            sessionStorage[state] = localStorage[state];
-            FHIR.oauth2.ready(MRP.initialize);
-        } else {
-            FHIR.oauth2.authorize({
-                "client_id": Config.payerEndpoint.clientID,
-                "scope":  Config.payerEndpoint.scope,
-                "iss": Config.payerEndpoint.url
-            });
-        }
-    } else {
+        FHIR.oauth2.authorize({
+            "client_id": Config.payerEndpoint.clientID,
+            "scope":  Config.payerEndpoint.scope,
+            "iss": Config.payerEndpoint.url
+        });
+    } else if (Config.payerEndpoint.type === "secure-generic") {
+        sessionStorage.operationPayload = JSON.stringify(payload);
+        FHIR.oauth2.authorize({
+            "client_id": Config.payerEndpoint.clientID,
+            "scope":  Config.payerEndpoint.scope,
+            "iss": Config.payerEndpoint.url,
+            "fakeTokenResponse": {
+                "access_token":Config.payerEndpoint.accessToken,
+                "token_type":"Bearer",
+                "expires_in":3600,
+                "scope":"user/*.write"
+            }
+        });
+    } else if (Config.payerEndpoint.type === "open") {
         MRP.finalize(new FHIR.client(Config.payerEndpoint.url));
     }
 }
@@ -295,13 +300,6 @@ MRP.reconcile = async () => {
 MRP.initialize = (client) => {
     MRP.loadConfig();
     if (sessionStorage.operationPayload) {
-        //client.state.tokenResponse
-        if (client.state.tokenResponse.refresh_token) {
-            // save state in localStorage
-            let state = client.state.key;
-            localStorage.tokenResponse = client.state.tokenResponse;
-            localStorage[state] = sessionStorage[state];
-        }
         Config.operationPayload = JSON.parse(sessionStorage.operationPayload);
         Config.payerEndpoint.accessToken = client.state.tokenResponse.access_token;
         MRP.finalize(client);
