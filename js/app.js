@@ -284,7 +284,7 @@ MRP.reconcile = async () => {
         FHIR.oauth2.authorize({
             "client_id": Config.payerEndpoint.clientID,
             "scope":  Config.payerEndpoint.scope,
-            "iss": Config.payerEndpoint.url,
+            "fhirServiceUrl": Config.payerEndpoint.url,
             "fakeTokenResponse": {
                 "access_token":Config.payerEndpoint.accessToken,
                 "token_type":"Bearer",
