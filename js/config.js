@@ -1,7 +1,7 @@
 let Config = {};
 
 Config.clientSettings = {
-  "client_id": "8203e7c6-ce9c-415f-84fa-81c1ad8c85c7",
+  "client_id": "9858e697-1755-4f14-b77d-1b669cd3b05a",
   "scope"    : "patient/*.* openid profile"
 }
 
@@ -10,13 +10,13 @@ Config.submitEndpoint = "/Measure/measure-mrp/$submit-data";
 Config.payerEndpoints = [{
     "name": "HSPC Payer Demo (Secure)",
     "type": "secure-smart",
-    "url": "https://api.logicahealth.org/DaVinciMRPPayer/data",
-    "clientID": "09bce41f-ebb6-4b00-93ae-464a1625bf31",
+    "url": "https://api.logicahealth.org/DaVinciMRPPayerR4/data",
+    "clientID": "436f7bcc-07cc-4e04-a395-a610fde492ba",
     "scope": "user/*.write" // offline_access
   },{
     "name": "HSPC Payer Demo (Open)",
     "type": "open",
-    "url": "https://api.logicahealth.org/DaVinciMRPPayer/open"
+    "url": "https://api.logicahealth.org/DaVinciMRPPayerR4/open"
   },{
     "name": "DBCG (Open)",
     "type": "open",
@@ -131,7 +131,7 @@ Config.operationPayload = {
             "measure": {
                 "reference": "https://ncqa.org/fhir/ig/Measure/measure-mrp"
             },
-            "patient": {
+            "subject": {
                 "reference": "Patient/PATIENTID"
             },
             "date": "TIMESTAMP",
@@ -139,19 +139,12 @@ Config.operationPayload = {
                 "start": "TIMESTAMP",
                 "end": "TIMESTAMP"
             },
-            "reportingOrganization": {
+            "reporter": {
                 "reference": "Organization/ORGANIZATIONID"
             },
-            "evaluatedResources": {
-              "extension": [
-                {
-                  "url": "http://hl7.org/fhir/us/davinci-deqm/StructureDefinition/extension-referenceAny",
-                  "valueReference": {
-                    "reference": "Task/TASKID"
-                  }
-                }
-              ]
-            }
+            "evaluatedResource": [{
+                "reference": "Task/TASKID"
+            }]
         }
       },
       {
@@ -183,7 +176,7 @@ Config.operationPayload = {
             "for": {
               "reference": "Patient/PATIENTID"
             },
-            "context": {
+            "encounter": {
               "reference": "Encounter/ENCOUNTERID"
             },
             "authoredOn": "TIMESTAMP",
@@ -230,7 +223,7 @@ Config.operationPayload = {
             },
             "status": "finished",
             "class": {
-              "system": "http://hl7.org/fhir/v3/ActCode",
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
               "code": "AMB",
               "display": "ambulatory"
             },

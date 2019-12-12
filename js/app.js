@@ -137,14 +137,14 @@ MRP.generatePayload = (patientResource, practitionerResource, organizationResour
     coverage.resource = coverageResource;
 
     // TODO: look into a more elegant resource generation approach
-    measurereport.resource.patient.reference = "Patient/" + patient.resource.id;
+    measurereport.resource.subject.reference = "Patient/" + patient.resource.id;
     measurereport.resource.date = timestamp;
     measurereport.resource.period.start = timestamp;
     measurereport.resource.period.end = timestamp;
-    measurereport.resource.reportingOrganization.reference = "Organization/" + organization.resource.id;
-    measurereport.resource.evaluatedResources.extension[0].valueReference.reference = "Task/" + task.resource.id;
+    measurereport.resource.reporter.reference = "Organization/" + organization.resource.id;
+    measurereport.resource.evaluatedResource[0].reference = "Task/" + task.resource.id;
     task.resource.for.reference = "Patient/" + patient.resource.id;
-    task.resource.context.reference = "Encounter/" + encounter.resource.id;
+    task.resource.encounter.reference = "Encounter/" + encounter.resource.id;
     task.resource.authoredOn = timestamp;
     task.resource.executionPeriod.start = timestamp;
     task.resource.executionPeriod.end = timestamp;
