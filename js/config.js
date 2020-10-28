@@ -119,7 +119,7 @@ Config.operationPayload = {
     "id": "OPERATIONID",
     "parameter": [
       {
-        "name": "measure-report",
+        "name": "measureReport",
         "resource": {
             "resourceType": "MeasureReport",
             "meta": {
