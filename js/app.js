@@ -110,7 +110,7 @@ MRP.getMedicationName = (medCodings) => {
 
 MRP.generatePayload = (patientResource, practitionerResource, organizationResource, locationResource, coverageResource, payorResource) => {
     let timestamp = MRP.now();
-    let measurereport = Config.operationPayload.parameter.find(e => e.name === "measure-report");
+    let measurereport = Config.operationPayload.parameter.find(e => e.name === "measureReport");
 
     // TODO: consider generating using descrete templates instead of extracting from sample
     let task = Config.operationPayload.parameter.find(e => e.name === "resource" && e.resource.resourceType === "Task");
