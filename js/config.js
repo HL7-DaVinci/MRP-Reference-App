@@ -8,6 +8,10 @@ Config.clientSettings = {
 Config.submitEndpoint = "/Measure/measure-mrp/$submit-data";
 
 Config.payerEndpoints = [{
+    "name": "Alphora (Open)",
+    "type": "open",
+    "url": "https://gic-sandbox.alphora.com/cqf-ruler-r4/fhir/"
+  },{
     "name": "HSPC Payer Demo (Secure)",
     "type": "secure-smart",
     "url": "https://api.logicahealth.org/DaVinciMRPPayerR4/data",
