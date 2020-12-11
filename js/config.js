@@ -5,71 +5,85 @@ Config.clientSettings = {
   "scope"    : "patient/*.* openid profile"
 }
 
-Config.submitEndpoint = "/Measure/measure-mrp/$submit-data";
+Config.submitEndpoint = "/Measure/MEASUREID/$submit-data";
 
 Config.payerEndpoints = [{
     "name": "Alphora (Open)",
     "type": "open",
-    "url": "https://gic-sandbox.alphora.com/cqf-ruler-r4/fhir/"
+    "url": "https://gic-sandbox.alphora.com/cqf-ruler-r4/fhir/",
+    "measureID": "measure-mrp"
   },{
     "name": "HSPC Payer Demo (Secure)",
     "type": "secure-smart",
     "url": "https://api.logicahealth.org/DaVinciMRPPayerR4/data",
+    "measureID": "measure-mrp",
     "clientID": "436f7bcc-07cc-4e04-a395-a610fde492ba",
     "scope": "user/*.write" // offline_access
   },{
     "name": "HSPC Payer Demo (Open)",
     "type": "open",
-    "url": "https://api.logicahealth.org/DaVinciMRPPayerR4/open"
+    "url": "https://api.logicahealth.org/DaVinciMRPPayerR4/open",
+    "measureID": "measure-mrp"
   },{
     "name": "DBCG (Open)",
     "type": "open",
-    "url": "http://measure.eval.kanvix.com/cqf-ruler/baseDstu3"
+    "url": "http://measure.eval.kanvix.com/cqf-ruler/baseDstu3",
+    "measureID": "measure-mrp"
   },{
     "name": "BCBS Alabama (Secure)",
     "type": "secure-generic",
     "url": "https://api2.bcbsal.org/fhir/stu3",
+    "measureID": "measure-mrp",
     "accessToken": "SECRETHERE"
   },{
     "name": "CareEvolution (Secure)",
     "type": "secure-smart",
     "url": "https://b3-fhirmeasuresendpoints-3629-consumers-sprint-s.b3-deploys.com/FhirMeasuresEndPoints.Adapter1.WebClient/api/fhir",
+    "measureID": "measure-mrp",
     "clientID": "HSPC",
     "scope": "user/*.read"
   },{
     "name": "TS Proxy - CareEvolution (Secure)",
     "type": "secure-smart",
     "url": "https://touchstone.aegis.net:57827/FhirMeasuresEndPoints.Adapter1.WebClient/api/fhir",
+    "measureID": "measure-mrp",
     "clientID": "HSPC",
     "scope": "user/*.read"
   },{
     "name": "Humana (Open)",
     "type": "open",
-    "url": "https://deqm-dot-hum-hcs-rapid-fhir-sbx.appspot.com/baseSTU3"
+    "url": "https://deqm-dot-hum-hcs-rapid-fhir-sbx.appspot.com/baseSTU3",
+    "measureID": "measure-mrp"
   },{
     "name": "TS Proxy - Humana (Open)",
     "type": "open",
-    "url": "https://touchstone.aegis.net:54868/baseSTU3"
+    "url": "https://touchstone.aegis.net:54868/baseSTU3",
+    "measureID": "measure-mrp"
   },{
     "name": "IBC (Open)",
     "type": "open",
-    "url": "https://TBD"
+    "url": "https://TBD",
+    "measureID": "measure-mrp"
   },{
     "name": "Edifecs - GuideWell Demo (Open)",
     "type": "open",
-    "url": "https://fhir.collablynk.com"
+    "url": "https://fhir.collablynk.com",
+    "measureID": "measure-mrp"
   },{
     "name": "TS Proxy - Edifecs - GuideWell Demo (Open)",
     "type": "open",
-    "url": "https://touchstone.aegis.net:59200"
+    "url": "https://touchstone.aegis.net:59200",
+    "measureID": "measure-mrp"
   },{
     "name": "UnitedHealthcare (Open)",
     "type": "open",
-    "url": "https://fhirreststaging.azurewebsites.net/fhir"
+    "url": "https://fhirreststaging.azurewebsites.net/fhir",
+    "measureID": "measure-mrp"
   },{
     "name": "TS Proxy - UnitedHealthcare (Open)",
     "type": "open",
-    "url": "https://touchstone.aegis.net:57798/fhir"
+    "url": "https://touchstone.aegis.net:57798/fhir",
+    "measureID": "measure-mrp"
   }
 ]
 

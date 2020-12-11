@@ -324,9 +324,10 @@ MRP.loadConfig = () => {
 
 MRP.finalize = async (client) => {
     try {
+        let url = Config.submitEndpoint.replace("MEASUREID", Config.payerEndpoint.measureID);
         await client.request({
             method: 'POST',
-            url: Config.submitEndpoint,
+            url: url,
             body: JSON.stringify(Config.operationPayload),
             headers:{
                 'Content-Type': 'application/fhir+json'
