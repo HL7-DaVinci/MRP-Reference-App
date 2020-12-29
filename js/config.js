@@ -88,7 +88,7 @@ Config.payerEndpoints = [{
 ]
 
 // default configuration
-Config.configSetting = 1; // HSPC Payer Demo (Open)
+Config.configSetting = 0; // Alphora (Open)
 Config.payerEndpoint = Config.payerEndpoints[Config.configSetting];
 
 Config.scenarios = {
