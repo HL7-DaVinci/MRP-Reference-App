@@ -63,18 +63,12 @@ MRP.displayConfigScreen = () => {
 
 MRP.displayReviewScreen = () => {
     $("#final-list").empty();
-    Config.newListResource.entry = [];
     let meds = MRP.reconciledMeds
                     .sort((a,b) => a.name >= b.name)
                     .filter((a) => a.status === "active");
 
     for (let med of meds) {
         if ($('#' + med.id).val() === "active") {
-            Config.newListResource.entry.push ({
-                "item": {
-                    "reference": "MedicationRequest/" + med.id
-                }
-            });
             $("#final-list").append("<tr><td class='medtd'>" + med.name + 
                                     "</td><td>" + med.dosage +
                                     "</td><td>" + med.route + "</td></tr>");
@@ -88,6 +82,10 @@ MRP.displayErrorScreen = (title, message) => {
     $('#error-title').html(title);
     $('#error-message').html(message);
     MRP.displayScreen('error-screen');
+}
+
+MRP.enable = (id) => {
+    $("#"+id).prop("disabled",false);
 }
 
 MRP.disable = (id) => {
@@ -262,16 +260,6 @@ MRP.reconcile = async () => {
     let payor = payorOrganization;
     let payload = MRP.generatePayload(MRP.patient, practitioner, organization, location, coverage, payor);
 
-    // TODO: Generate new MedicationRequests etc
-    // TODO: Disable/deprecate source lists and MedicationRequest-s
-    // TODO: Review list ID generation scheme
-    Config.newListResource.id = "list-" + MRP.getRandomInt (1000,9999);
-    Config.newListResource.date = timestamp;
-    Config.newListResource.subject.reference = "Patient/" + MRP.client.patient.id;
-    $('#confirm-screen p').append(" (" + Config.newListResource.id + ")");
-
-    await MRP.client.update(Config.newListResource);
-
     if (Config.payerEndpoint.type === "secure-smart") {
         sessionStorage.operationPayload = JSON.stringify(payload);
         FHIR.oauth2.authorize({
@@ -334,10 +322,34 @@ MRP.finalize = async (client) => {
             }
         });
         console.log (JSON.stringify(Config.operationPayload, null, 2));
+            
+        $("#submit-endpoint").html("POST " + Config.payerEndpoint.url.replace(/\/$/, "") + url);
+        $("#text-output").html(JSON.stringify(Config.operationPayload, null, '  '));
+
         MRP.displayConfirmScreen();
     } catch (err) {
         MRP.displayErrorScreen("Measure report submission failed", "Please check the submit endpoint configuration");
     }
+}
+
+MRP.restart = () => {
+    let meds = MRP.reconciledMeds
+        .sort((a,b) => a.name >= b.name)
+        .filter((a) => a.status === "active");
+
+    for (let med of meds) {
+        $('#' + med.id).val("active");
+    }
+
+    // TODO: this does not seem to work
+    $("#chk-post-discharge").prop( "checked", true );
+
+    $('#discharge-selection').show();
+    MRP.enable('btn-submit');
+    MRP.enable('btn-edit');
+    $('#btn-submit').html("Submit reconciled medications");
+
+    MRP.displayIntroScreen();
 }
 
 $('#chk-post-discharge').bootstrapToggle({
@@ -346,6 +358,7 @@ $('#chk-post-discharge').bootstrapToggle({
 });
 
 $('#btn-review').click(MRP.displayReviewScreen);
+$('#btn-restart').click(MRP.restart);
 $('#btn-start').click(MRP.displayMedRecScreen);
 $('#btn-edit').click(MRP.displayMedRecScreen);
 $('#btn-submit').click(MRP.reconcile);

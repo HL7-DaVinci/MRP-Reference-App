@@ -49,3 +49,8 @@ td {
 .header-image-container img {
     height: 70px
 }
+
+#text-output  {
+    height: 300px;
+    width: 600px;
+}
