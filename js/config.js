@@ -119,19 +119,6 @@ Config.scenarios = {
   }
 }
 
-Config.newListResource = {
-    "resourceType": "List",
-    "id": "LISTIDHERE",
-    "status": "current",
-    "subject": {
-        "reference": "Patient/PATIENTID"
-    },
-    "date": "DATEHERE",
-    "mode": "working",
-    "title": "Reconciled Medications",
-    "entry": []
-}
-
 Config.operationPayload = {
     "resourceType": "Parameters",
     "id": "OPERATIONID",
